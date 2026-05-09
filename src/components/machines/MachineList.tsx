@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { AlertTriangle, CheckCircle, Wrench, MessageSquare, Trash2 } from 'lucide-react'
+import { AlertTriangle, CheckCircle, Wrench, MessageSquare, Trash2, Loader2 } from 'lucide-react'
 import type { Machine } from '@/types/database'
 import {
   updateMachineStatusAction,
@@ -11,7 +11,7 @@ import {
 interface MachineListProps {
   machines: Machine[]
   isAdmin: boolean
-  canEdit: boolean // admin or collecter
+  canEdit: boolean
 }
 
 interface MachineRowProps {
@@ -34,10 +34,7 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
     setError(null)
     startTransition(async () => {
       const result = await updateMachineStatusAction(machine.id, newStatus, comment)
-      if (result?.error) {
-        setIsBroken(!newStatus) // revert
-        setError(result.error)
-      }
+      if (result?.error) { setIsBroken(!newStatus); setError(result.error) }
     })
   }
 
@@ -45,12 +42,8 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
     setError(null)
     startTransition(async () => {
       const result = await updateMachineStatusAction(machine.id, isBroken, draftComment)
-      if (result?.error) {
-        setError(result.error)
-      } else {
-        setComment(draftComment)
-        setEditingComment(false)
-      }
+      if (result?.error) setError(result.error)
+      else { setComment(draftComment); setEditingComment(false) }
     })
   }
 
@@ -58,85 +51,70 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
     if (!confirm(`「${machine.name}」を削除しますか？この操作は取り消せません。`)) return
     startTransition(async () => {
       const result = await deleteMachineAction(machine.id)
-      if (result?.error) {
-        setError(result.error)
-      }
+      if (result?.error) setError(result.error)
     })
   }
 
   return (
     <div
-      className={`rounded-xl border p-4 transition-colors ${
-        isBroken ? 'border-red-200 bg-red-50' : 'border-gray-100 bg-white'
+      className={`rounded-lg border transition-all ${
+        isBroken ? 'border-accent-tomato/30 bg-[#fff3f0]' : 'border-hairline bg-canvas'
       } ${isPending ? 'opacity-60' : ''}`}
     >
-      <div className="flex items-start justify-between gap-3">
-        {/* Left: name + unit count + status */}
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <Wrench
-            className={`h-4 w-4 flex-shrink-0 mt-0.5 ${isBroken ? 'text-red-400' : 'text-gray-400'}`}
-          />
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-semibold text-gray-800">{machine.name}</span>
-              <span className="text-xs text-gray-400">×{machine.unit_count}台</span>
-              {isBroken ? (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-full">
-                  <AlertTriangle className="h-3 w-3" />
-                  故障中
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                  <CheckCircle className="h-3 w-3" />
-                  正常
-                </span>
-              )}
-            </div>
-
-            {/* Comment display */}
-            {!editingComment && comment && (
-              <p className="text-xs text-gray-500 mt-1 truncate max-w-xs">{comment}</p>
-            )}
-          </div>
+      <div className="flex items-center gap-3 p-4">
+        <div
+          className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+            isBroken ? 'bg-[#ffece8]' : 'bg-canvas-soft'
+          }`}
+        >
+          {isPending ? (
+            <Loader2 className="h-5 w-5 animate-spin text-ink-mute" />
+          ) : isBroken ? (
+            <AlertTriangle className="h-5 w-5 text-accent-tomato" />
+          ) : (
+            <CheckCircle className="h-5 w-5 text-primary" />
+          )}
         </div>
 
-        {/* Right: action buttons */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-ink">{machine.name}</span>
+            <span className="text-xs text-ink-mute bg-canvas-soft px-1.5 py-0.5 rounded">
+              ×{machine.unit_count}台
+            </span>
+          </div>
+          <span className={`text-xs font-medium ${isBroken ? 'text-accent-tomato' : 'text-primary'}`}>
+            {isBroken ? '故障中' : '正常稼働'}
+          </span>
+          {!editingComment && comment && (
+            <p className="text-xs text-ink-mute mt-0.5 truncate max-w-xs">{comment}</p>
+          )}
+        </div>
+
         <div className="flex items-center gap-2 flex-shrink-0">
           {canEdit && (
             <>
-              {/* Toggle broken status */}
               <button
                 onClick={toggleStatus}
                 disabled={isPending}
-                title={isBroken ? '正常に戻す' : '故障中にする'}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition disabled:opacity-50 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-sm border transition disabled:opacity-50 ${
                   isBroken
-                    ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                    : 'bg-red-50 text-red-600 hover:bg-red-100'
+                    ? 'border-primary/30 bg-canvas-soft text-primary hover:bg-canvas'
+                    : 'border-accent-tomato/30 bg-[#fff3f0] text-accent-tomato hover:bg-canvas'
                 }`}
               >
                 {isBroken ? (
-                  <>
-                    <CheckCircle className="h-3.5 w-3.5" />
-                    正常に戻す
-                  </>
+                  <><CheckCircle className="h-3.5 w-3.5" />正常に戻す</>
                 ) : (
-                  <>
-                    <AlertTriangle className="h-3.5 w-3.5" />
-                    故障中
-                  </>
+                  <><AlertTriangle className="h-3.5 w-3.5" />故障中にする</>
                 )}
               </button>
 
-              {/* Comment edit toggle */}
               <button
-                onClick={() => {
-                  setDraftComment(comment)
-                  setEditingComment(!editingComment)
-                }}
+                onClick={() => { setDraftComment(comment); setEditingComment(!editingComment) }}
                 disabled={isPending}
                 title="コメントを編集"
-                className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition disabled:opacity-50"
+                className="p-1.5 rounded-sm text-ink-mute hover:text-ink hover:bg-canvas-soft transition disabled:opacity-50"
               >
                 <MessageSquare className="h-4 w-4" />
               </button>
@@ -148,7 +126,7 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
               onClick={handleDelete}
               disabled={isPending}
               title="削除"
-              className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition disabled:opacity-50"
+              className="p-1.5 rounded-sm text-ink-mute hover:text-accent-tomato hover:bg-[#fff3f0] transition disabled:opacity-50"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -156,29 +134,25 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
         </div>
       </div>
 
-      {/* Inline comment editor */}
       {editingComment && (
-        <div className="mt-3 flex items-center gap-2">
+        <div className="px-4 pb-4 pt-0 flex items-center gap-2">
           <input
             type="text"
             value={draftComment}
             onChange={(e) => setDraftComment(e.target.value)}
-            placeholder="コメントを入力（任意）"
-            className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition"
+            placeholder="コメントを入力（例：ドア故障中）"
+            className="flex-1 px-3 py-1.5 text-sm border border-hairline rounded-sm focus:outline-none focus:border-ink-mute-2 transition"
           />
           <button
             onClick={saveComment}
             disabled={isPending}
-            className="px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition"
+            className="px-3 py-1.5 text-xs font-medium bg-primary text-on-primary rounded-sm hover:bg-primary-deep disabled:opacity-50 transition"
           >
             保存
           </button>
           <button
-            onClick={() => {
-              setEditingComment(false)
-              setDraftComment(comment)
-            }}
-            className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition"
+            onClick={() => { setEditingComment(false); setDraftComment(comment) }}
+            className="px-3 py-1.5 text-xs text-ink-mute hover:text-ink rounded-sm hover:bg-canvas-soft transition"
           >
             取消
           </button>
@@ -186,7 +160,7 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
       )}
 
       {error && (
-        <p className="mt-2 text-xs text-red-600 bg-red-50 border border-red-100 rounded px-2 py-1">
+        <p className="mx-4 mb-4 text-xs text-accent-tomato bg-[#fff3f0] border border-accent-tomato/30 rounded px-2 py-1">
           {error}
         </p>
       )}
@@ -197,7 +171,7 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
 export default function MachineList({ machines, isAdmin, canEdit }: MachineListProps) {
   if (machines.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-400">
+      <div className="text-center py-12 text-ink-faint">
         <Wrench className="h-10 w-10 mx-auto mb-3 opacity-30" />
         <p className="text-sm">機器がまだ登録されていません。</p>
       </div>
@@ -207,12 +181,7 @@ export default function MachineList({ machines, isAdmin, canEdit }: MachineListP
   return (
     <div className="space-y-3">
       {machines.map((machine) => (
-        <MachineRow
-          key={machine.id}
-          machine={machine}
-          isAdmin={isAdmin}
-          canEdit={canEdit}
-        />
+        <MachineRow key={machine.id} machine={machine} isAdmin={isAdmin} canEdit={canEdit} />
       ))}
     </div>
   )
