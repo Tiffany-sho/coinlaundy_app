@@ -20,7 +20,6 @@ export default async function MachinesPage({ params }: PageProps) {
 
   const supabase = await createClient()
 
-  // Fetch store
   const { data: store } = await supabase
     .from('laundry_store')
     .select('id, name')
@@ -29,7 +28,6 @@ export default async function MachinesPage({ params }: PageProps) {
 
   if (!store) notFound()
 
-  // Fetch machines ordered by sort_order
   const { data: machines } = await supabase
     .from('machines')
     .select('*')
@@ -43,50 +41,47 @@ export default async function MachinesPage({ params }: PageProps) {
 
   return (
     <div className="max-w-3xl">
-      {/* Back link */}
       <Link
         href={`/dashboard/stores/${id}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 transition mb-6"
+        className="inline-flex items-center gap-1 text-sm text-ink-mute hover:text-ink transition mb-6"
       >
         ← 店舗に戻る
       </Link>
 
-      {/* Header */}
       <div className="flex items-start justify-between gap-4 mb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Wrench className="h-5 w-5 text-indigo-500" />
-            <h1 className="text-2xl font-bold text-gray-900">機器管理</h1>
+            <Wrench className="h-5 w-5 text-primary" />
+            <h1 className="text-2xl font-medium text-ink tracking-tight">機器管理</h1>
           </div>
-          <p className="text-sm text-gray-500">{store.name}</p>
+          <p className="text-sm text-ink-mute">{store.name}</p>
         </div>
       </div>
 
-      {/* Status summary */}
       {machineList.length > 0 && (
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+          <div className="bg-canvas-soft border border-hairline rounded-lg p-4 flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
             <div>
-              <p className="text-xs text-green-600 font-medium">正常稼働</p>
-              <p className="text-xl font-bold text-green-700">{workingCount}台</p>
+              <p className="text-xs text-ink-mute font-medium">正常稼働</p>
+              <p className="text-xl font-medium text-ink">{workingCount}台</p>
             </div>
           </div>
           <div
-            className={`border rounded-xl p-4 flex items-center gap-3 ${
+            className={`border rounded-lg p-4 flex items-center gap-3 ${
               brokenCount > 0
-                ? 'bg-red-50 border-red-100'
-                : 'bg-gray-50 border-gray-100'
+                ? 'bg-[#fff3f0] border-accent-tomato/30'
+                : 'bg-canvas-soft border-hairline'
             }`}
           >
             <AlertTriangle
-              className={`h-5 w-5 flex-shrink-0 ${brokenCount > 0 ? 'text-red-500' : 'text-gray-300'}`}
+              className={`h-5 w-5 flex-shrink-0 ${brokenCount > 0 ? 'text-accent-tomato' : 'text-ink-faint'}`}
             />
             <div>
-              <p className={`text-xs font-medium ${brokenCount > 0 ? 'text-red-600' : 'text-gray-400'}`}>
+              <p className={`text-xs font-medium ${brokenCount > 0 ? 'text-accent-tomato' : 'text-ink-mute'}`}>
                 故障中
               </p>
-              <p className={`text-xl font-bold ${brokenCount > 0 ? 'text-red-700' : 'text-gray-400'}`}>
+              <p className={`text-xl font-medium ${brokenCount > 0 ? 'text-accent-tomato' : 'text-ink-faint'}`}>
                 {brokenCount}台
               </p>
             </div>
@@ -94,12 +89,10 @@ export default async function MachinesPage({ params }: PageProps) {
         </div>
       )}
 
-      {/* Machine list */}
       <div className="mb-6">
         <MachineList machines={machineList} isAdmin={isAdmin} canEdit={canEdit} />
       </div>
 
-      {/* Add machine form (admin only) */}
       {isAdmin && <AddMachineForm laundryId={id} />}
     </div>
   )

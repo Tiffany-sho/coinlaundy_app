@@ -13,7 +13,6 @@ export default async function StoresPage() {
   const isAdmin = profile.role === 'admin'
 
   const supabase = await createClient()
-
   let stores: StoreWithMachines[] = []
 
   if (membership?.org_id) {
@@ -28,18 +27,15 @@ export default async function StoresPage() {
 
   return (
     <div>
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">店舗管理</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            登録されている店舗の一覧です
-          </p>
+          <h1 className="text-2xl font-medium text-ink tracking-tight">店舗管理</h1>
+          <p className="mt-1 text-sm text-ink-mute">登録されている店舗の一覧です</p>
         </div>
         {isAdmin && (
           <Link
             href="/dashboard/stores/new"
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary-deep text-on-primary text-sm font-medium px-4 py-2.5 rounded-sm transition"
           >
             <Plus className="h-4 w-4" />
             新規店舗追加
@@ -47,20 +43,19 @@ export default async function StoresPage() {
         )}
       </div>
 
-      {/* Store Grid */}
       {stores.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-white p-12 text-center">
-          <Store className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-700 mb-1">
+        <div className="rounded-lg border-2 border-dashed border-hairline bg-canvas p-12 text-center">
+          <Store className="mx-auto h-12 w-12 text-ink-faint mb-4" />
+          <h3 className="text-lg font-medium text-ink mb-1">
             店舗がまだ登録されていません
           </h3>
-          <p className="text-sm text-gray-500 mb-6">
+          <p className="text-sm text-ink-mute mb-6">
             店舗を登録すると、集金記録や在庫管理が始められます。
           </p>
           {isAdmin && (
             <Link
               href="/dashboard/stores/new"
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary-deep text-on-primary text-sm font-medium px-5 py-2.5 rounded-sm transition"
             >
               <Plus className="h-4 w-4" />
               最初の店舗を登録する
@@ -72,59 +67,62 @@ export default async function StoresPage() {
           {stores.map((store) => {
             const totalMachines = store.machines.length
             const brokenMachines = store.machines.filter((m) => m.is_broken).length
+            const imageUrls: string[] = Array.isArray(store.images) ? (store.images as string[]) : []
+            const firstImage = imageUrls[0] ?? null
 
             return (
               <Link
                 key={store.id}
                 href={`/dashboard/stores/${store.id}`}
-                className="group bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all duration-200 overflow-hidden"
+                className="group bg-canvas rounded-lg border border-hairline hover:border-hairline-strong hover:shadow-sm transition-all duration-200 overflow-hidden"
               >
-                {/* Card Header */}
-                <div className="bg-gradient-to-br from-indigo-50 to-blue-50 px-5 pt-5 pb-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <h2 className="text-lg font-bold text-gray-900 truncate group-hover:text-indigo-700 transition-colors">
-                        {store.name}
-                      </h2>
-                      {store.location && (
-                        <div className="flex items-center gap-1.5 mt-1.5 text-sm text-gray-500">
-                          <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-indigo-400" />
-                          <span className="truncate">{store.location}</span>
-                        </div>
-                      )}
+                <div className="relative h-40 overflow-hidden bg-canvas-soft">
+                  {firstImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={firstImage}
+                      alt={store.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Store className="h-14 w-14 text-ink-faint" />
                     </div>
-                    <div className="flex-shrink-0 bg-white rounded-lg p-2 shadow-sm">
-                      <Store className="h-5 w-5 text-indigo-500" />
+                  )}
+
+                  {brokenMachines > 0 && (
+                    <div className="absolute top-2 right-2">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent-tomato text-on-dark text-xs font-medium rounded-full">
+                        <Wrench className="h-3 w-3" />
+                        故障 {brokenMachines}台
+                      </span>
                     </div>
-                  </div>
+                  )}
                 </div>
 
-                {/* Card Body */}
                 <div className="px-5 py-4">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    {/* Machine count badge */}
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">
+                  <h2 className="text-base font-medium text-ink truncate group-hover:text-primary transition-colors mb-1">
+                    {store.name}
+                  </h2>
+                  {store.location && (
+                    <div className="flex items-center gap-1.5 text-sm text-ink-mute mb-3">
+                      <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-ink-faint" />
+                      <span className="truncate">{store.location}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-canvas-soft text-ink-mute text-xs font-medium rounded-full">
                       <WashingMachine className="h-3.5 w-3.5" />
                       {totalMachines}台
                     </span>
-
-                    {/* Broken machine badge */}
-                    {brokenMachines > 0 && (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-700 text-xs font-medium rounded-full">
-                        <Wrench className="h-3.5 w-3.5" />
-                        故障中 {brokenMachines}台
-                      </span>
-                    )}
-
                     {totalMachines === 0 && (
-                      <span className="text-xs text-gray-400">機器未登録</span>
+                      <span className="text-xs text-ink-faint">機器未登録</span>
                     )}
                   </div>
 
                   {store.description && (
-                    <p className="mt-3 text-sm text-gray-500 line-clamp-2">
-                      {store.description}
-                    </p>
+                    <p className="mt-2 text-sm text-ink-mute line-clamp-2">{store.description}</p>
                   )}
                 </div>
               </Link>

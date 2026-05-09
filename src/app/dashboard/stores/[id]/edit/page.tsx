@@ -31,17 +31,17 @@ export default async function EditStorePage({ params }: PageProps) {
       <div className="mb-2">
         <Link
           href={`/dashboard/stores/${id}`}
-          className="text-sm text-gray-500 hover:text-indigo-600 transition"
+          className="text-sm text-ink-mute hover:text-ink transition"
         >
           ← 店舗詳細に戻る
         </Link>
       </div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">店舗情報を編集</h1>
-        <p className="mt-1 text-sm text-gray-500">{store.name}</p>
+        <h1 className="text-2xl font-medium text-ink tracking-tight">店舗情報を編集</h1>
+        <p className="mt-1 text-sm text-ink-mute">{store.name}</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-canvas rounded-lg border border-hairline p-6">
         <StoreForm mode="edit" store={store} />
       </div>
     </div>

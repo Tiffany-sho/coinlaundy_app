@@ -19,10 +19,10 @@ export async function createStoreAction(formData: FormData) {
   const supabase = await createClient()
 
   const name = formData.get('name') as string
-  const location = (formData.get('location') as string) || null
-  const description = (formData.get('description') as string) || null
+  const location = (formData.get('location') as string) ?? ''
+  const description = (formData.get('description') as string) ?? ''
   const imagesRaw = formData.get('images') as string | null
-  const images = imagesRaw ? JSON.parse(imagesRaw) : null
+  const images = imagesRaw ? JSON.parse(imagesRaw) : []
 
   if (!name) {
     return { error: '店舗名を入力してください。' }
@@ -77,10 +77,10 @@ export async function updateStoreAction(storeId: string, formData: FormData) {
   const supabase = await createClient()
 
   const name = formData.get('name') as string
-  const location = (formData.get('location') as string) || null
-  const description = (formData.get('description') as string) || null
+  const location = (formData.get('location') as string) ?? ''
+  const description = (formData.get('description') as string) ?? ''
   const imagesRaw = formData.get('images') as string | null
-  const images = imagesRaw ? JSON.parse(imagesRaw) : null
+  const images = imagesRaw ? JSON.parse(imagesRaw) : []
 
   if (!name) {
     return { error: '店舗名を入力してください。' }
