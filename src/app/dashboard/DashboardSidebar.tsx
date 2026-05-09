@@ -43,12 +43,6 @@ const roleLabels: Record<Role, string> = {
   viewer: '閲覧者',
 }
 
-const roleBadgeColors: Record<Role, string> = {
-  admin: 'bg-indigo-500 text-white',
-  collecter: 'bg-teal-500 text-white',
-  viewer: 'bg-gray-400 text-white',
-}
-
 interface Props {
   role: Role
   fullName: string | null
@@ -60,37 +54,32 @@ export default function DashboardSidebar({ role, fullName, username }: Props) {
   const pathname = usePathname()
 
   const visibleItems = navItems.filter((item) => !item.adminOnly || role === 'admin')
-
   const displayName = fullName ?? username ?? 'ユーザー'
 
   function isActive(href: string) {
-    if (href === '/dashboard') {
-      return pathname === '/dashboard'
-    }
+    if (href === '/dashboard') return pathname === '/dashboard'
     return pathname.startsWith(href)
   }
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Logo */}
-      <div className="px-6 py-5 border-b border-indigo-800">
+      <div className="px-6 py-5 border-b border-hairline">
         <Link href="/dashboard" className="block" onClick={() => setMobileOpen(false)}>
-          <span className="text-2xl font-bold text-white tracking-tight">Collecie</span>
-          <p className="text-xs text-indigo-300 mt-0.5">コインランドリー集金管理</p>
+          <span className="text-2xl font-medium text-ink tracking-tight">Collecie</span>
+          <p className="text-xs text-ink-mute mt-0.5">コインランドリー集金管理</p>
         </Link>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {visibleItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
             onClick={() => setMobileOpen(false)}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition ${
               isActive(item.href)
-                ? 'bg-indigo-700 text-white'
-                : 'text-indigo-200 hover:bg-indigo-800 hover:text-white'
+                ? 'text-ink bg-canvas-soft border-l-2 border-primary pl-[10px]'
+                : 'text-ink-mute hover:bg-canvas-soft hover:text-ink'
             }`}
           >
             {item.icon}
@@ -99,24 +88,19 @@ export default function DashboardSidebar({ role, fullName, username }: Props) {
         ))}
       </nav>
 
-      {/* User info */}
-      <div className="px-4 py-4 border-t border-indigo-800">
+      <div className="px-4 py-4 border-t border-hairline">
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-indigo-500 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+          <div className="h-9 w-9 rounded-full bg-canvas-soft border border-hairline flex items-center justify-center text-ink text-sm font-medium flex-shrink-0">
             {displayName.charAt(0)}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-medium text-white truncate">{displayName}</div>
-            <span className={`inline-block mt-0.5 text-xs px-1.5 py-0.5 rounded-full font-medium ${roleBadgeColors[role]}`}>
+            <div className="text-sm font-medium text-ink truncate">{displayName}</div>
+            <span className="inline-block mt-0.5 text-xs px-1.5 py-0.5 rounded-full bg-canvas-soft text-ink-mute">
               {roleLabels[role]}
             </span>
           </div>
           <form action="/auth/signout" method="post">
-            <button
-              type="submit"
-              title="ログアウト"
-              className="text-indigo-300 hover:text-white transition"
-            >
+            <button type="submit" title="ログアウト" className="text-ink-mute hover:text-ink transition">
               <LogOut className="h-4 w-4" />
             </button>
           </form>
@@ -127,30 +111,24 @@ export default function DashboardSidebar({ role, fullName, username }: Props) {
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col w-64 flex-shrink-0 bg-indigo-900 h-screen">
+      <aside className="hidden md:flex flex-col w-64 flex-shrink-0 bg-canvas border-r border-hairline h-screen">
         <SidebarContent />
       </aside>
 
-      {/* Mobile: hamburger button */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-indigo-900 text-white rounded-lg shadow-lg"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-canvas text-ink border border-hairline rounded-md shadow-sm"
         onClick={() => setMobileOpen(true)}
         aria-label="メニューを開く"
       >
         <Menu className="h-5 w-5" />
       </button>
 
-      {/* Mobile: overlay */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-40 flex">
-          <div
-            className="fixed inset-0 bg-black/50"
-            onClick={() => setMobileOpen(false)}
-          />
-          <aside className="relative z-50 flex flex-col w-72 bg-indigo-900 h-full shadow-xl">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
+          <aside className="relative z-50 flex flex-col w-72 bg-canvas border-r border-hairline h-full shadow-xl">
             <button
-              className="absolute top-4 right-4 text-indigo-300 hover:text-white"
+              className="absolute top-4 right-4 text-ink-mute hover:text-ink"
               onClick={() => setMobileOpen(false)}
               aria-label="メニューを閉じる"
             >
