@@ -22,7 +22,7 @@ export default function DeleteStoreButton({ storeId, storeName }: DeleteStoreBut
       type="button"
       disabled={isPending}
       onClick={handleClick}
-      className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 disabled:opacity-50 rounded-lg transition"
+      className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-accent-tomato bg-canvas border border-hairline-strong hover:bg-[#fff3f0] disabled:opacity-50 rounded-sm transition"
     >
       {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
       削除
