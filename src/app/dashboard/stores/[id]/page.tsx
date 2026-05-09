@@ -1,9 +1,9 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Pencil, Trash2, Plus, Wrench, WashingMachine, Package } from 'lucide-react'
+import { MapPin, Pencil, Plus, Wrench, WashingMachine, Package } from 'lucide-react'
 import { getCurrentUserWithOrg } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
-import { deleteStoreAction } from '@/app/dashboard/stores/actions'
+import DeleteStoreButton from '@/components/stores/DeleteStoreButton'
 import type { Machine, LaundryInventory, InventoryType } from '@/types/database'
 
 interface InventoryWithType extends LaundryInventory {
@@ -52,11 +52,6 @@ export default async function StoreDetailPage({ params }: PageProps) {
   const brokenMachines = machineList.filter((m) => m.is_broken).length
   const imageUrls: string[] = Array.isArray(store.images) ? (store.images as string[]) : []
 
-  async function handleDelete() {
-    'use server'
-    await deleteStoreAction(id)
-  }
-
   return (
     <div className="max-w-4xl">
       {/* Back link */}
@@ -92,20 +87,7 @@ export default async function StoreDetailPage({ params }: PageProps) {
                 <Pencil className="h-3.5 w-3.5" />
                 編集
               </Link>
-              <form action={handleDelete}>
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition"
-                  onClick={(e) => {
-                    if (!confirm(`「${store.name}」を削除しますか？この操作は取り消せません。`)) {
-                      e.preventDefault()
-                    }
-                  }}
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  削除
-                </button>
-              </form>
+              <DeleteStoreButton storeId={id} storeName={store.name} />
             </div>
           )}
         </div>
@@ -211,9 +193,20 @@ export default async function StoreDetailPage({ params }: PageProps) {
       </div>
 
       {/* Inventory section */}
-      {inventoryList.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">在庫サマリー</h2>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">在庫</h2>
+          <Link
+            href={`/dashboard/stores/${id}/inventory`}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-teal-600 bg-teal-50 hover:bg-teal-100 rounded-lg transition"
+          >
+            <Package className="h-3.5 w-3.5" />
+            在庫管理
+          </Link>
+        </div>
+        {inventoryList.length === 0 ? (
+          <p className="text-sm text-gray-400">在庫種別が登録されていません。</p>
+        ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {inventoryList.map((inv) => (
               <div key={inv.id} className="p-3 rounded-lg bg-gray-50 border border-gray-100">
@@ -227,8 +220,8 @@ export default async function StoreDetailPage({ params }: PageProps) {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Action button */}
       <div className="flex gap-3">
