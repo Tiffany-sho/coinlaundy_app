@@ -63,25 +63,24 @@ export default async function CollectionDetailPage({ params }: PageProps) {
     <div className="max-w-2xl">
       <Link
         href="/dashboard/collect"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 transition mb-6"
+        className="inline-flex items-center gap-1 text-sm text-ink-mute hover:text-ink transition mb-6"
       >
         ← 集金記録一覧に戻る
       </Link>
 
-      {/* Header card */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
+      <div className="bg-canvas rounded-lg border border-hairline p-6 mb-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Store className="h-4 w-4 text-indigo-400" />
-              <span className="text-sm font-medium text-indigo-600">
+              <Store className="h-4 w-4 text-ink-faint" />
+              <span className="text-sm font-medium text-ink-mute">
                 {record.laundry_store?.name ?? '不明な店舗'}
               </span>
             </div>
-            <p className="text-4xl font-bold text-green-600 mb-3">
+            <p className="text-4xl font-medium text-ink mb-3">
               {formatAmount(record.total_funds)}
             </p>
-            <div className="flex flex-wrap gap-3 text-sm text-gray-500">
+            <div className="flex flex-wrap gap-3 text-sm text-ink-mute">
               <span className="inline-flex items-center gap-1.5">
                 <CalendarDays className="h-3.5 w-3.5" />
                 {formatDateJST(record.collected_at)}
@@ -96,7 +95,7 @@ export default async function CollectionDetailPage({ params }: PageProps) {
             <div className="flex items-center gap-2 flex-shrink-0">
               <Link
                 href={`/dashboard/collect/${id}/edit`}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-ink bg-canvas border border-hairline hover:bg-canvas-soft rounded-sm transition"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 編集
@@ -104,7 +103,7 @@ export default async function CollectionDetailPage({ params }: PageProps) {
               <form action={handleDelete}>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-accent-tomato bg-canvas border border-hairline-strong hover:bg-[#fff3f0] rounded-sm transition"
                   onClick={(e) => {
                     if (!confirm('この集金記録を削除しますか？この操作は取り消せません。')) {
                       e.preventDefault()
@@ -120,17 +119,16 @@ export default async function CollectionDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Breakdown */}
       {fundsArray.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">内訳</h2>
+        <div className="bg-canvas rounded-lg border border-hairline p-6">
+          <h2 className="text-base font-medium text-ink mb-4">内訳</h2>
           <div className="space-y-4">
             {fundsArray.map((item) => (
-              <div key={item.machine_id} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
+              <div key={item.machine_id} className="border border-hairline rounded-md p-4 bg-canvas-soft">
                 {item.machine_id !== 'total' && (
                   <div className="flex items-center gap-2 mb-3">
-                    <WashingMachine className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm font-medium text-gray-800">{item.name}</span>
+                    <WashingMachine className="h-4 w-4 text-ink-faint" />
+                    <span className="text-sm font-medium text-ink">{item.name}</span>
                   </div>
                 )}
 
@@ -138,36 +136,36 @@ export default async function CollectionDetailPage({ params }: PageProps) {
                   <>
                     <div className="grid grid-cols-5 gap-2 mb-3">
                       {(['10', '50', '100', '500', '1000'] as const).map((denom) => {
-                        const count = item.denominations![denom] ?? 0
+                        const cnt = item.denominations![denom] ?? 0
                         return (
                           <div key={denom} className="text-center">
-                            <div className="text-xs text-gray-500 mb-1">
+                            <div className="text-xs text-ink-mute mb-1">
                               {DENOMINATION_LABELS[denom]}
                             </div>
                             <div
-                              className={`text-sm font-bold py-1.5 rounded-lg ${
-                                count > 0
-                                  ? 'bg-green-50 text-green-700'
-                                  : 'bg-gray-100 text-gray-300'
+                              className={`text-sm font-medium py-1.5 rounded-md ${
+                                cnt > 0
+                                  ? 'bg-canvas text-ink border border-hairline'
+                                  : 'bg-canvas text-ink-faint border border-hairline'
                               }`}
                             >
-                              {count}枚
+                              {cnt}枚
                             </div>
                           </div>
                         )
                       })}
                     </div>
-                    <div className="flex items-center justify-between border-t border-gray-200 pt-2">
-                      <span className="text-xs text-gray-500">小計</span>
-                      <span className="font-bold text-green-600">{formatAmount(item.amount)}</span>
+                    <div className="flex items-center justify-between border-t border-hairline pt-2">
+                      <span className="text-xs text-ink-mute">小計</span>
+                      <span className="font-medium text-ink">{formatAmount(item.amount)}</span>
                     </div>
                   </>
                 ) : (
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-ink-mute">
                       {item.machine_id === 'total' ? '合計金額' : '金額'}
                     </span>
-                    <span className="text-xl font-bold text-green-600">
+                    <span className="text-xl font-medium text-ink">
                       {formatAmount(item.amount)}
                     </span>
                   </div>
@@ -176,10 +174,9 @@ export default async function CollectionDetailPage({ params }: PageProps) {
             ))}
           </div>
 
-          {/* Total row */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
-            <span className="text-sm font-semibold text-gray-700">合計</span>
-            <span className="text-2xl font-bold text-green-600">
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-hairline">
+            <span className="text-sm font-medium text-ink-mute">合計</span>
+            <span className="text-2xl font-medium text-ink">
               {formatAmount(record.total_funds)}
             </span>
           </div>

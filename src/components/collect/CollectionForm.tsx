@@ -40,7 +40,6 @@ function calcFromDenoms(denoms: DenomCounts): number {
 
 function nowJSTString(): string {
   const now = new Date()
-  // Format as datetime-local input value in JST
   const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000)
   return jst.toISOString().slice(0, 16)
 }
@@ -58,8 +57,6 @@ export default function CollectionForm({
   const collectMethod = profile.collect_method ?? 'machines'
   const trackDenoms = profile.track_denominations ?? false
 
-  // ─── State ────────────────────────────────────────────────────────────────
-
   const [selectedStoreId, setSelectedStoreId] = useState<string>(
     initialData?.laundry_id ?? initialStoreId ?? stores[0]?.id ?? ''
   )
@@ -75,7 +72,6 @@ export default function CollectionForm({
       : nowJSTString()
   )
 
-  // Per-machine entries
   const [entries, setEntries] = useState<MachineEntry[]>(() => {
     if (initialData?.funds_array) {
       const arr = initialData.funds_array as FundsItem[]
@@ -108,7 +104,6 @@ export default function CollectionForm({
       ]
     }
 
-    // machines mode - init from initialMachines
     return initialMachines.map((m) => ({
       machine_id: m.id,
       name: m.name,
@@ -122,9 +117,6 @@ export default function CollectionForm({
 
   const draftKey = `draft_collect_${selectedStoreId}`
 
-  // ─── Draft ────────────────────────────────────────────────────────────────
-
-  // Load draft on mount (only for new records)
   useEffect(() => {
     if (isEdit || !selectedStoreId) return
     try {
@@ -143,7 +135,6 @@ export default function CollectionForm({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftKey, isEdit])
 
-  // Save draft whenever entries or date changes (not in edit mode)
   useEffect(() => {
     if (isEdit || !selectedStoreId) return
     try {
@@ -152,8 +143,6 @@ export default function CollectionForm({
       // ignore
     }
   }, [collectedAt, entries, draftKey, isEdit, selectedStoreId])
-
-  // ─── Store change ─────────────────────────────────────────────────────────
 
   const fetchMachinesForStore = useCallback(
     async (storeId: string) => {
@@ -197,8 +186,6 @@ export default function CollectionForm({
     }
   }
 
-  // ─── Amount helpers ───────────────────────────────────────────────────────
-
   const updateAmount = (idx: number, amount: number) => {
     setEntries((prev) => {
       const next = [...prev]
@@ -221,8 +208,6 @@ export default function CollectionForm({
 
   const totalFunds = entries.reduce((sum, e) => sum + e.amount, 0)
 
-  // ─── Submit ───────────────────────────────────────────────────────────────
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -230,9 +215,7 @@ export default function CollectionForm({
 
     const formData = new FormData()
     formData.set('laundry_id', selectedStoreId)
-    // Convert local datetime to UTC ISO
     const localDate = new Date(collectedAt)
-    // collectedAt is local time (JST), subtract offset to get UTC
     const utcDate = new Date(localDate.getTime() - 9 * 60 * 60 * 1000)
     formData.set('collected_at', utcDate.toISOString())
 
@@ -254,7 +237,6 @@ export default function CollectionForm({
       return
     }
 
-    // Clear draft on success
     if (!isEdit && selectedStoreId) {
       try {
         localStorage.removeItem(draftKey)
@@ -262,28 +244,24 @@ export default function CollectionForm({
         // ignore
       }
     }
-    // redirect handled by server action
   }
-
-  // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-[#fff3f0] border border-accent-tomato/30 text-accent-tomato px-4 py-3 rounded-md text-sm">
           {error}
         </div>
       )}
 
-      {/* Store selector */}
       {!initialStoreId && !isEdit && (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">店舗を選択</label>
+        <div className="bg-canvas rounded-lg border border-hairline p-5">
+          <label className="block text-sm font-medium text-ink-mute mb-2">店舗を選択</label>
           <select
             value={selectedStoreId}
             onChange={(e) => handleStoreChange(e.target.value)}
             required
-            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+            className="w-full text-sm border border-hairline rounded-sm px-3 py-2.5 focus:outline-none focus:border-ink-mute-2 bg-canvas"
           >
             <option value="">-- 店舗を選択してください --</option>
             {stores.map((s) => (
@@ -293,43 +271,40 @@ export default function CollectionForm({
         </div>
       )}
 
-      {/* Date / time */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">集金日時</label>
+      <div className="bg-canvas rounded-lg border border-hairline p-5">
+        <label className="block text-sm font-medium text-ink-mute mb-2">集金日時</label>
         <input
           type="datetime-local"
           value={collectedAt}
           onChange={(e) => setCollectedAt(e.target.value)}
           required
-          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full text-sm border border-hairline rounded-sm px-3 py-2.5 focus:outline-none focus:border-ink-mute-2"
         />
       </div>
 
-      {/* Amount inputs */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-        <h2 className="text-sm font-semibold text-gray-700 mb-4">
+      <div className="bg-canvas rounded-lg border border-hairline p-5">
+        <h2 className="text-sm font-medium text-ink-mute mb-4">
           {collectMethod === 'total' ? '集金額' : '機器別集金額'}
         </h2>
 
         {loadingMachines ? (
-          <div className="py-6 text-center text-sm text-gray-400">機器情報を読み込み中...</div>
+          <div className="py-6 text-center text-sm text-ink-faint">機器情報を読み込み中...</div>
         ) : (
           <div className="space-y-6">
             {entries.map((entry, idx) => (
-              <div key={entry.machine_id} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
+              <div key={entry.machine_id} className="border border-hairline rounded-md p-4 bg-canvas-soft">
                 {collectMethod === 'machines' && (
-                  <div className="text-sm font-medium text-gray-800 mb-3">{entry.name}</div>
+                  <div className="text-sm font-medium text-ink mb-3">{entry.name}</div>
                 )}
 
                 {trackDenoms && entry.denominations ? (
                   <>
-                    {/* Denomination grid */}
                     <div className="grid grid-cols-5 gap-2 mb-3">
                       {DENOMINATIONS.map((d) => {
                         const key = String(d) as DenomKey
                         return (
                           <div key={d} className="text-center">
-                            <label className="block text-xs text-gray-500 mb-1">{d}円</label>
+                            <label className="block text-xs text-ink-mute mb-1">{d}円</label>
                             <input
                               type="number"
                               min={0}
@@ -337,21 +312,20 @@ export default function CollectionForm({
                               onChange={(e) =>
                                 updateDenom(idx, key, parseInt(e.target.value, 10) || 0)
                               }
-                              className="w-full text-center text-sm font-semibold border border-gray-200 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                              className="w-full text-center text-sm font-medium border border-hairline rounded-sm py-2 focus:outline-none focus:border-ink-mute-2 bg-canvas"
                             />
                           </div>
                         )
                       })}
                     </div>
-                    <div className="flex items-center justify-between border-t border-gray-200 pt-2">
-                      <span className="text-xs text-gray-500">小計</span>
-                      <span className="text-base font-bold text-green-600">{formatAmount(entry.amount)}</span>
+                    <div className="flex items-center justify-between border-t border-hairline pt-2">
+                      <span className="text-xs text-ink-mute">小計</span>
+                      <span className="text-base font-medium text-ink">{formatAmount(entry.amount)}</span>
                     </div>
                   </>
                 ) : (
-                  /* Simple amount input */
                   <div className="flex items-center gap-3">
-                    <span className="text-gray-500 font-medium">¥</span>
+                    <span className="text-ink-mute font-medium">¥</span>
                     <input
                       type="number"
                       min={0}
@@ -359,16 +333,16 @@ export default function CollectionForm({
                       value={entry.amount === 0 ? '' : entry.amount}
                       onChange={(e) => updateAmount(idx, parseInt(e.target.value, 10) || 0)}
                       placeholder="0"
-                      className="flex-1 text-right text-2xl font-bold border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                      className="flex-1 text-right text-2xl font-medium border border-hairline rounded-sm px-4 py-3 focus:outline-none focus:border-ink-mute-2 bg-canvas"
                     />
-                    <span className="text-gray-500 font-medium">円</span>
+                    <span className="text-ink-mute font-medium">円</span>
                   </div>
                 )}
               </div>
             ))}
 
             {entries.length === 0 && collectMethod === 'machines' && (
-              <p className="text-sm text-gray-400 text-center py-4">
+              <p className="text-sm text-ink-faint text-center py-4">
                 この店舗には機器が登録されていません。
               </p>
             )}
@@ -376,16 +350,15 @@ export default function CollectionForm({
         )}
       </div>
 
-      {/* Running total - sticky on mobile */}
-      <div className="sticky bottom-0 z-10 bg-white border border-gray-200 rounded-xl shadow-lg p-4 flex items-center justify-between">
+      <div className="sticky bottom-0 z-10 bg-canvas border border-hairline rounded-lg shadow-sm p-4 flex items-center justify-between">
         <div>
-          <p className="text-xs text-gray-500 mb-0.5">合計集金額</p>
-          <p className="text-3xl font-bold text-green-600">{formatAmount(totalFunds)}</p>
+          <p className="text-xs text-ink-mute mb-0.5">合計集金額</p>
+          <p className="text-3xl font-medium text-ink">{formatAmount(totalFunds)}</p>
         </div>
         <button
           type="submit"
           disabled={submitting || !selectedStoreId || totalFunds === 0}
-          className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition text-sm"
+          className="px-6 py-3 bg-primary hover:bg-primary-deep disabled:opacity-50 disabled:cursor-not-allowed text-on-primary font-medium rounded-sm transition text-sm"
         >
           {submitting ? '保存中...' : isEdit ? '更新する' : '記録する'}
         </button>

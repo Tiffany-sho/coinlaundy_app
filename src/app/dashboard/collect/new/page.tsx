@@ -31,7 +31,6 @@ export default async function NewCollectionPage({ searchParams }: PageProps) {
 
   const initialStoreId = params.store ?? stores[0]?.id ?? ''
 
-  // Fetch machines for initial store
   let machines: Machine[] = []
   if (initialStoreId && profile.collect_method !== 'total') {
     const { data } = await supabase
@@ -47,14 +46,14 @@ export default async function NewCollectionPage({ searchParams }: PageProps) {
     <div>
       <Link
         href="/dashboard/collect"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 transition mb-6"
+        className="inline-flex items-center gap-1 text-sm text-ink-mute hover:text-ink transition mb-6"
       >
         ← 集金記録一覧に戻る
       </Link>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">集金を記録する</h1>
-        <p className="mt-1 text-sm text-gray-500">集金金額を入力してください</p>
+        <h1 className="text-2xl font-medium text-ink tracking-tight">集金を記録する</h1>
+        <p className="mt-1 text-sm text-ink-mute">集金金額を入力してください</p>
       </div>
 
       <CollectionForm

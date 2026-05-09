@@ -19,7 +19,6 @@ export default async function EditCollectionPage({ params }: PageProps) {
 
   const supabase = await createClient()
 
-  // Fetch existing record
   const { data: record } = await supabase
     .from('collect_funds')
     .select('*')
@@ -30,12 +29,10 @@ export default async function EditCollectionPage({ params }: PageProps) {
 
   const existingRecord = record as CollectFunds
 
-  // Permission check for collecter
   if (profile.role === 'collecter' && existingRecord.collector_id !== user.id) {
     redirect('/dashboard/collect')
   }
 
-  // Fetch stores
   let stores: LaundryStore[] = []
   if (membership?.org_id) {
     const { data } = await supabase
@@ -46,7 +43,6 @@ export default async function EditCollectionPage({ params }: PageProps) {
     stores = data ?? []
   }
 
-  // Fetch machines for the record's store
   let machines: Machine[] = []
   if (profile.collect_method !== 'total') {
     const { data } = await supabase
@@ -62,14 +58,14 @@ export default async function EditCollectionPage({ params }: PageProps) {
     <div>
       <Link
         href={`/dashboard/collect/${id}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 transition mb-6"
+        className="inline-flex items-center gap-1 text-sm text-ink-mute hover:text-ink transition mb-6"
       >
         ← 集金記録詳細に戻る
       </Link>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">集金記録を編集</h1>
-        <p className="mt-1 text-sm text-gray-500">集金情報を修正できます</p>
+        <h1 className="text-2xl font-medium text-ink tracking-tight">集金記録を編集</h1>
+        <p className="mt-1 text-sm text-ink-mute">集金情報を修正できます</p>
       </div>
 
       <CollectionForm
