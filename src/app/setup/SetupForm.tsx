@@ -57,18 +57,18 @@ export default function SetupForm() {
   }
 
   return (
-    <div className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8">
+    <div className="w-full max-w-lg bg-canvas rounded-lg shadow-sm p-8">
       {/* Step indicator */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <StepBadge active={step === 1} done={step === 2} label="1" />
-          <div className="h-px flex-1 bg-gray-200" />
+          <div className="h-px flex-1 bg-hairline" />
           <StepBadge active={step === 2} done={false} label="2" />
         </div>
-        <h2 className="text-2xl font-semibold text-gray-800 mt-4">
+        <h2 className="text-2xl font-semibold text-ink mt-4">
           {step === 1 ? 'プロフィール設定' : '組織の作成'}
         </h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-ink-mute">
           {step === 1
             ? 'あなたの基本情報と役割を設定してください。'
             : '管理する組織の情報を入力してください。'}
@@ -76,7 +76,7 @@ export default function SetupForm() {
       </div>
 
       {error && (
-        <div className="mb-5 flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="mb-5 flex items-start gap-2 rounded-md bg-[#fff3f0] border border-accent-tomato/30 px-4 py-3 text-sm text-accent-tomato">
           <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -87,11 +87,11 @@ export default function SetupForm() {
         <div className="space-y-5">
           {/* Full Name */}
           <div>
-            <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="full_name" className="block text-sm font-medium text-ink-mute mb-1">
               氏名 <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-mute-2" />
               <input
                 id="full_name"
                 type="text"
@@ -99,19 +99,19 @@ export default function SetupForm() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="山田 太郎"
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                className="w-full pl-10 pr-4 py-2.5 border border-hairline rounded-sm text-sm focus:outline-none focus:border-ink-mute-2 transition"
               />
             </div>
           </div>
 
           {/* Username */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="username" className="block text-sm font-medium text-ink-mute mb-1">
               ユーザー名{' '}
-              <span className="text-gray-400 text-xs">(任意)</span>
+              <span className="text-ink-mute-2 text-xs">(任意)</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-mute-2 text-sm font-medium">
                 @
               </span>
               <input
@@ -120,14 +120,14 @@ export default function SetupForm() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="yamada_taro"
-                className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                className="w-full pl-8 pr-4 py-2.5 border border-hairline rounded-sm text-sm focus:outline-none focus:border-ink-mute-2 transition"
               />
             </div>
           </div>
 
           {/* Role Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink-mute mb-2">
               役割 <span className="text-red-500">*</span>
             </label>
             <div className="space-y-2">
@@ -171,7 +171,7 @@ export default function SetupForm() {
             type="button"
             onClick={handleNext}
             disabled={!role || isNonAdminRole}
-            className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-medium py-2.5 px-4 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-deep disabled:opacity-50 disabled:cursor-not-allowed text-on-primary font-medium py-2.5 px-4 rounded-sm transition"
           >
             次へ
             <ChevronRight className="h-4 w-4" />
@@ -184,25 +184,25 @@ export default function SetupForm() {
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
           {/* Org Name */}
           <div>
-            <label htmlFor="org_name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="org_name" className="block text-sm font-medium text-ink-mute mb-1">
               組織名 <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-mute-2" />
               <input
                 id="org_name"
                 name="org_name"
                 type="text"
                 required
                 placeholder="株式会社コインランドリー"
-                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                className="w-full pl-10 pr-4 py-2.5 border border-hairline rounded-sm text-sm focus:outline-none focus:border-ink-mute-2 transition"
               />
             </div>
           </div>
 
           {/* Collect Method */}
           <fieldset>
-            <legend className="block text-sm font-medium text-gray-700 mb-2">
+            <legend className="block text-sm font-medium text-ink-mute mb-2">
               集金入力方法
             </legend>
             <div className="space-y-2">
@@ -224,18 +224,18 @@ export default function SetupForm() {
 
           {/* Track Denominations */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-ink-mute mb-2">
               金種別記録
             </label>
-            <label className="flex items-center gap-3 p-3 rounded-lg border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+            <label className="flex items-center gap-3 p-3 rounded-lg border-2 border-hairline hover:border-hairline-strong cursor-pointer transition">
               <input
                 type="checkbox"
                 name="track_denominations_raw"
-                className="h-4 w-4 rounded accent-indigo-600"
+                className="h-4 w-4 rounded accent-primary"
               />
               <div>
-                <div className="text-sm font-medium text-gray-800">金種別に記録する</div>
-                <div className="text-xs text-gray-500 mt-0.5">
+                <div className="text-sm font-medium text-ink">金種別に記録する</div>
+                <div className="text-xs text-ink-mute mt-0.5">
                   10円・50円・100円・500円・1000円ごとに記録
                 </div>
               </div>
@@ -244,7 +244,7 @@ export default function SetupForm() {
 
           {/* Collection Cycle */}
           <fieldset>
-            <legend className="block text-sm font-medium text-gray-700 mb-2">
+            <legend className="block text-sm font-medium text-ink-mute mb-2">
               集金サイクル
             </legend>
             <div className="flex gap-3">
@@ -257,7 +257,7 @@ export default function SetupForm() {
             <button
               type="button"
               onClick={handleBack}
-              className="flex items-center gap-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+              className="flex items-center gap-1 px-4 py-2.5 text-sm font-medium text-ink bg-canvas border border-hairline-strong hover:bg-canvas-soft rounded-sm transition"
             >
               <ChevronLeft className="h-4 w-4" />
               戻る
@@ -265,7 +265,7 @@ export default function SetupForm() {
             <button
               type="submit"
               disabled={isPending}
-              className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-medium py-2.5 px-4 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="flex-1 flex items-center justify-center gap-2 bg-primary hover:bg-primary-deep disabled:opacity-50 text-on-primary font-medium py-2.5 px-4 rounded-sm transition"
             >
               {isPending ? 'セットアップ中...' : 'セットアップ完了'}
             </button>
@@ -291,10 +291,10 @@ function StepBadge({
     <div
       className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition ${
         active
-          ? 'bg-indigo-600 text-white'
+          ? 'bg-primary text-on-primary'
           : done
-          ? 'bg-indigo-200 text-indigo-700'
-          : 'bg-gray-100 text-gray-400'
+          ? 'bg-canvas-soft text-ink-mute'
+          : 'bg-canvas-soft text-ink-mute-2'
       }`}
     >
       {label}
@@ -320,7 +320,7 @@ function RoleCard({
   return (
     <label
       className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition ${
-        selected ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'
+        selected ? 'border-primary bg-canvas-soft' : 'border-hairline hover:border-hairline-strong'
       }`}
     >
       <input
@@ -329,16 +329,16 @@ function RoleCard({
         value={value}
         checked={selected}
         onChange={onChange}
-        className="mt-0.5 accent-indigo-600"
+        className="mt-0.5 accent-primary"
       />
       <div>
-        <div className="text-sm font-semibold text-gray-800">
+        <div className="text-sm font-semibold text-ink">
           {title}
           {badge && (
             <span className="ml-2 text-xs font-normal text-amber-600">{badge}</span>
           )}
         </div>
-        <div className="text-xs text-gray-500 mt-0.5">{description}</div>
+        <div className="text-xs text-ink-mute mt-0.5">{description}</div>
       </div>
     </label>
   )
@@ -358,17 +358,17 @@ function MethodCard({
   description: string
 }) {
   return (
-    <label className="flex items-start gap-3 p-3 rounded-lg border-2 border-gray-200 hover:border-gray-300 cursor-pointer transition has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
+    <label className="flex items-start gap-3 p-3 rounded-lg border-2 border-hairline hover:border-hairline-strong cursor-pointer transition has-[:checked]:border-primary has-[:checked]:bg-canvas-soft">
       <input
         type="radio"
         name={name}
         value={value}
         defaultChecked={defaultChecked}
-        className="mt-0.5 accent-indigo-600"
+        className="mt-0.5 accent-primary"
       />
       <div>
-        <div className="text-sm font-medium text-gray-800">{title}</div>
-        <div className="text-xs text-gray-500">{description}</div>
+        <div className="text-sm font-medium text-ink">{title}</div>
+        <div className="text-xs text-ink-mute">{description}</div>
       </div>
     </label>
   )
@@ -386,15 +386,15 @@ function CycleCard({
   defaultChecked?: boolean
 }) {
   return (
-    <label className="flex-1 flex items-center gap-2 p-3 rounded-lg border-2 border-gray-200 hover:border-gray-300 cursor-pointer transition has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
+    <label className="flex-1 flex items-center gap-2 p-3 rounded-lg border-2 border-hairline hover:border-hairline-strong cursor-pointer transition has-[:checked]:border-primary has-[:checked]:bg-canvas-soft">
       <input
         type="radio"
         name={name}
         value={value}
         defaultChecked={defaultChecked}
-        className="accent-indigo-600"
+        className="accent-primary"
       />
-      <span className="text-sm font-medium text-gray-800">{label}</span>
+      <span className="text-sm font-medium text-ink">{label}</span>
     </label>
   )
 }
