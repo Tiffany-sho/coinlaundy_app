@@ -44,7 +44,7 @@ export default async function MembersPage() {
 
   // Fetch profiles for all member user IDs
   const userIds = memberList.map((m) => m.user_id)
-  let profileMap: Record<string, { full_name: string | null; username: string | null }> = {}
+  const profileMap: Record<string, { full_name: string | null; username: string | null }> = {}
   if (userIds.length > 0) {
     const { data: profiles } = await supabase
       .from('profiles')
@@ -61,7 +61,7 @@ export default async function MembersPage() {
   // Since we can't call admin API in the server component directly without service role,
   // we get the current user's email from auth and use email from invitations for others.
   // We use auth.admin.listUsers if service role key is available, otherwise use profile username as fallback.
-  let emailMap: Record<string, string> = {}
+  const emailMap: Record<string, string> = {}
   // Try to get emails from auth admin API
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -117,13 +117,13 @@ export default async function MembersPage() {
     <div>
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-2.5 bg-indigo-50 rounded-xl">
-          <Users className="h-6 w-6 text-indigo-600" />
+        <div className="bg-canvas-soft p-2.5 rounded-lg border border-hairline">
+          <Users className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">メンバー管理</h1>
+          <h1 className="text-2xl font-medium text-ink tracking-tight">メンバー管理</h1>
           {org?.name && (
-            <p className="mt-0.5 text-sm text-gray-500">{org.name}</p>
+            <p className="mt-0.5 text-sm text-ink-mute">{org.name}</p>
           )}
         </div>
       </div>
@@ -132,9 +132,9 @@ export default async function MembersPage() {
         {/* Members list */}
         <div className="xl:col-span-2">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-gray-900">
+            <h2 className="text-base font-medium text-ink">
               現在のメンバー
-              <span className="ml-2 text-sm font-normal text-gray-500">({members.length}人)</span>
+              <span className="ml-2 text-sm font-normal text-ink-mute">({members.length}人)</span>
             </h2>
           </div>
           <MemberList

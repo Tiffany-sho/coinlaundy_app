@@ -61,7 +61,7 @@ export default function DashboardSidebar({ role, fullName, username }: Props) {
     return pathname.startsWith(href)
   }
 
-  const SidebarContent = () => (
+  const sidebarContent = (
     <div className="flex flex-col h-full">
       <div className="px-6 py-5 border-b border-hairline">
         <Link href="/dashboard" className="block" onClick={() => setMobileOpen(false)}>
@@ -112,7 +112,7 @@ export default function DashboardSidebar({ role, fullName, username }: Props) {
   return (
     <>
       <aside className="hidden md:flex flex-col w-64 flex-shrink-0 bg-canvas border-r border-hairline h-screen">
-        <SidebarContent />
+        {sidebarContent}
       </aside>
 
       <button
@@ -134,7 +134,7 @@ export default function DashboardSidebar({ role, fullName, username }: Props) {
             >
               <X className="h-5 w-5" />
             </button>
-            <SidebarContent />
+            {sidebarContent}
           </aside>
         </div>
       )}

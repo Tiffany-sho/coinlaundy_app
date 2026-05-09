@@ -63,20 +63,20 @@ export default async function LogsPage({ searchParams }: Props) {
     <div>
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="bg-indigo-50 p-2.5 rounded-xl">
-          <Activity className="h-6 w-6 text-indigo-600" />
+        <div className="bg-canvas-soft p-2.5 rounded-lg border border-hairline">
+          <Activity className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">アクションログ</h1>
-          <p className="mt-0.5 text-sm text-gray-500">組織内での操作履歴を確認できます</p>
+          <h1 className="text-2xl font-medium text-ink tracking-tight">アクションログ</h1>
+          <p className="mt-0.5 text-sm text-ink-mute">組織内での操作履歴を確認できます</p>
         </div>
       </div>
 
       {/* Date filter */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-5 py-4 mb-6">
+      <div className="bg-canvas rounded-lg border border-hairline px-5 py-4 mb-6">
         <form method="get" action="/dashboard/logs" className="flex flex-wrap items-end gap-3">
           <div>
-            <label htmlFor="from" className="block text-xs font-medium text-gray-600 mb-1">
+            <label htmlFor="from" className="block text-xs font-medium text-ink-mute mb-1">
               開始日
             </label>
             <input
@@ -84,11 +84,11 @@ export default async function LogsPage({ searchParams }: Props) {
               name="from"
               type="date"
               defaultValue={from}
-              className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 rounded-sm border border-hairline text-sm text-ink focus:outline-none focus:border-ink-mute-2"
             />
           </div>
           <div>
-            <label htmlFor="to" className="block text-xs font-medium text-gray-600 mb-1">
+            <label htmlFor="to" className="block text-xs font-medium text-ink-mute mb-1">
               終了日
             </label>
             <input
@@ -96,20 +96,20 @@ export default async function LogsPage({ searchParams }: Props) {
               name="to"
               type="date"
               defaultValue={to}
-              className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 rounded-sm border border-hairline text-sm text-ink focus:outline-none focus:border-ink-mute-2"
             />
           </div>
           <input type="hidden" name="page" value="1" />
           <button
             type="submit"
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition"
+            className="px-4 py-2 bg-primary hover:bg-primary-deep text-on-primary text-sm font-medium rounded-sm transition"
           >
             絞り込む
           </button>
           {(from || to) && (
             <a
               href="/dashboard/logs"
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition"
+              className="px-4 py-2 bg-canvas border border-hairline hover:bg-canvas-soft text-ink text-sm font-medium rounded-sm transition"
             >
               クリア
             </a>
@@ -118,13 +118,13 @@ export default async function LogsPage({ searchParams }: Props) {
       </div>
 
       {/* Log list */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-6 py-6">
+      <div className="bg-canvas rounded-lg border border-hairline px-6 py-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-sm font-semibold text-gray-900">
+          <h2 className="text-sm font-medium text-ink">
             {totalCount > 0 ? `全 ${totalCount} 件` : 'ログなし'}
           </h2>
           {totalPages > 1 && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-ink-mute">
               {page} / {totalPages} ページ
             </span>
           )}
@@ -138,32 +138,32 @@ export default async function LogsPage({ searchParams }: Props) {
             {page > 1 ? (
               <a
                 href={buildHref(page - 1)}
-                className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-ink-mute bg-canvas border border-hairline rounded-sm hover:bg-canvas-soft transition"
               >
                 <ChevronLeft className="h-4 w-4" />
                 前へ
               </a>
             ) : (
-              <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-100 rounded-lg cursor-not-allowed">
+              <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-ink-faint bg-canvas border border-hairline rounded-sm cursor-not-allowed">
                 <ChevronLeft className="h-4 w-4" />
                 前へ
               </span>
             )}
 
-            <span className="px-3 py-2 text-sm text-gray-700 font-medium">
+            <span className="px-3 py-2 text-sm text-ink font-medium">
               {page} / {totalPages}
             </span>
 
             {page < totalPages ? (
               <a
                 href={buildHref(page + 1)}
-                className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-ink-mute bg-canvas border border-hairline rounded-sm hover:bg-canvas-soft transition"
               >
                 次へ
                 <ChevronRight className="h-4 w-4" />
               </a>
             ) : (
-              <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-100 rounded-lg cursor-not-allowed">
+              <span className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-ink-faint bg-canvas border border-hairline rounded-sm cursor-not-allowed">
                 次へ
                 <ChevronRight className="h-4 w-4" />
               </span>

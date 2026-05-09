@@ -70,23 +70,23 @@ export default async function InventoryPage() {
     <div>
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="bg-teal-50 p-2.5 rounded-xl">
-          <Package className="h-6 w-6 text-teal-600" />
+        <div className="bg-canvas-soft p-2.5 rounded-lg border border-hairline">
+          <Package className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">在庫管理</h1>
-          <p className="mt-0.5 text-sm text-gray-500">各店舗の在庫数をリアルタイムで確認・更新できます</p>
+          <h1 className="text-2xl font-medium text-ink tracking-tight">在庫管理</h1>
+          <p className="mt-0.5 text-sm text-ink-mute">各店舗の在庫数をリアルタイムで確認・更新できます</p>
         </div>
       </div>
 
       {/* Low stock alert summary */}
       {lowStockItems.length > 0 && (
-        <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <div className="mb-6 bg-[#fffbe0] border-l-4 border-accent-yellow rounded-md p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="h-5 w-5 text-accent-yellow flex-shrink-0 mt-0.5" />
             <div>
-              <h2 className="text-sm font-semibold text-amber-800">在庫不足アラート</h2>
-              <p className="text-sm text-amber-700 mt-1">
+              <h2 className="text-sm font-semibold text-ink">在庫不足アラート</h2>
+              <p className="text-sm text-ink-mute mt-1">
                 {lowStockItems.length}件の在庫が閾値を下回っています。
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -97,8 +97,8 @@ export default async function InventoryPage() {
                       key={inv.id}
                       className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
                         inv.quantity === 0
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-amber-100 text-amber-700'
+                          ? 'bg-[#ffece8] text-accent-tomato'
+                          : 'bg-canvas-soft text-ink-mute'
                       }`}
                     >
                       {storeName} / {inv.inventory_types?.name ?? '不明'}:{' '}
@@ -108,7 +108,7 @@ export default async function InventoryPage() {
                   )
                 })}
                 {lowStockItems.length > 8 && (
-                  <span className="text-xs text-amber-600">他 {lowStockItems.length - 8}件</span>
+                  <span className="text-xs text-ink-mute">他 {lowStockItems.length - 8}件</span>
                 )}
               </div>
             </div>
@@ -117,13 +117,13 @@ export default async function InventoryPage() {
       )}
 
       {/* Matrix */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">在庫一覧マトリクス</h2>
-          <p className="text-xs text-gray-500 mt-0.5">
-            <span className="inline-block w-3 h-3 bg-amber-100 border border-amber-300 rounded-sm mr-1 align-middle" />
+      <div className="bg-canvas rounded-lg border border-hairline overflow-hidden mb-8">
+        <div className="px-6 py-4 border-b border-hairline">
+          <h2 className="text-base font-medium text-ink">在庫一覧マトリクス</h2>
+          <p className="text-xs text-ink-mute mt-0.5">
+            <span className="inline-block w-3 h-3 bg-[#fffbe0] border border-accent-yellow/40 rounded-sm mr-1 align-middle" />
             在庫少
-            <span className="inline-block w-3 h-3 bg-red-100 border border-red-300 rounded-sm ml-3 mr-1 align-middle" />
+            <span className="inline-block w-3 h-3 bg-[#ffece8] border border-accent-tomato/40 rounded-sm ml-3 mr-1 align-middle" />
             在庫切れ
           </p>
         </div>

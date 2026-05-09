@@ -119,16 +119,16 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">分析</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-medium text-ink tracking-tight">分析</h1>
+          <p className="mt-1 text-sm text-ink-mute">
             集金データの統計と傾向を確認できます
           </p>
         </div>
       </div>
 
       {/* Period Selector */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-6">
-        <p className="text-xs font-medium text-gray-500 mb-3">集計期間</p>
+      <div className="bg-canvas rounded-lg border border-hairline p-4 mb-6">
+        <p className="text-xs font-medium text-ink-mute mb-3">集計期間</p>
         <Suspense>
           <PeriodSelector
             currentFrom={from}
@@ -141,26 +141,26 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
       {/* Summary stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <SummaryCard
-          icon={<BarChart3 className="h-6 w-6 text-indigo-600" />}
+          icon={<BarChart3 className="h-6 w-6 text-primary" />}
           label="合計集金額"
           value={formatAmount(periodTotal)}
-          bgColor="bg-indigo-50"
+          bgColor="bg-canvas-soft"
         />
         <SummaryCard
-          icon={<Store className="h-6 w-6 text-blue-600" />}
+          icon={<Store className="h-6 w-6 text-primary" />}
           label="最多収益店舗"
           value={topStore ? topStore.storeName : '—'}
           sub={topStore ? formatAmount(topStore.total) : undefined}
-          bgColor="bg-blue-50"
+          bgColor="bg-canvas-soft"
         />
         <SummaryCard
-          icon={<ArrowUpDown className="h-6 w-6 text-cyan-600" />}
+          icon={<ArrowUpDown className="h-6 w-6 text-primary" />}
           label="平均集金額/店舗"
           value={storeData.length > 0 ? formatAmount(avgPerStore) : '—'}
-          bgColor="bg-cyan-50"
+          bgColor="bg-canvas-soft"
         />
         <SummaryCard
-          icon={<TrendingUp className="h-6 w-6 text-violet-600" />}
+          icon={<TrendingUp className="h-6 w-6 text-primary" />}
           label="前期比"
           value={
             periodChange !== null
@@ -169,28 +169,28 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
           }
           valueColor={
             periodChange === null
-              ? 'text-gray-400'
+              ? 'text-ink-faint'
               : periodChange >= 0
-              ? 'text-emerald-600'
-              : 'text-red-500'
+              ? 'text-primary'
+              : 'text-accent-tomato'
           }
-          bgColor="bg-violet-50"
+          bgColor="bg-canvas-soft"
         />
       </div>
 
       {/* Charts row */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
         {/* Monthly trend */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">
+        <div className="bg-canvas rounded-lg border border-hairline p-5">
+          <h2 className="text-base font-medium text-ink mb-4">
             月別集金推移
           </h2>
           <MonthlyChart data={monthlyData} storeNames={storeNames} />
         </div>
 
         {/* Store comparison */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">
+        <div className="bg-canvas rounded-lg border border-hairline p-5">
+          <h2 className="text-base font-medium text-ink mb-4">
             店舗別集金額（期間合計）
           </h2>
           <StoreComparisonChart data={storeData} />
@@ -198,26 +198,26 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
       </div>
 
       {/* Per-store breakdown table */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">
+      <div className="bg-canvas rounded-lg border border-hairline overflow-hidden">
+        <div className="px-5 py-4 border-b border-hairline">
+          <h2 className="text-base font-medium text-ink">
             店舗別内訳
           </h2>
         </div>
         {storeData.length === 0 ? (
-          <div className="p-10 text-center text-gray-400 text-sm">
+          <div className="p-10 text-center text-ink-faint text-sm">
             データがありません
           </div>
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 text-xs text-gray-500 font-medium uppercase tracking-wide">
+              <tr className="bg-canvas-soft text-xs text-ink-mute font-medium uppercase tracking-wide">
                 <th className="px-5 py-3 text-left">店舗名</th>
                 <th className="px-5 py-3 text-right">集金額</th>
                 <th className="px-5 py-3 text-right">構成比</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-hairline">
               {storeData.map((store) => {
                 const pct =
                   periodTotal > 0
@@ -226,19 +226,19 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
                 return (
                   <tr
                     key={store.storeId}
-                    className="hover:bg-gray-50 transition"
+                    className="hover:bg-canvas-soft transition"
                   >
-                    <td className="px-5 py-3.5 font-medium text-gray-900">
+                    <td className="px-5 py-3.5 font-medium text-ink">
                       {store.storeName}
                     </td>
-                    <td className="px-5 py-3.5 text-right font-semibold text-indigo-700">
+                    <td className="px-5 py-3.5 text-right font-medium text-primary">
                       {formatAmount(store.total)}
                     </td>
-                    <td className="px-5 py-3.5 text-right text-gray-500">
+                    <td className="px-5 py-3.5 text-right text-ink-mute">
                       <div className="flex items-center justify-end gap-2">
-                        <div className="w-20 bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                        <div className="w-20 bg-canvas-soft rounded-full h-1.5 overflow-hidden border border-hairline">
                           <div
-                            className="h-full bg-indigo-500 rounded-full"
+                            className="h-full bg-primary rounded-full"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -250,14 +250,14 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
               })}
             </tbody>
             <tfoot>
-              <tr className="border-t-2 border-gray-200 bg-gray-50">
-                <td className="px-5 py-3 font-semibold text-gray-700">
+              <tr className="border-t-2 border-hairline-strong bg-canvas-soft">
+                <td className="px-5 py-3 font-medium text-ink">
                   合計
                 </td>
-                <td className="px-5 py-3 text-right font-bold text-indigo-700">
+                <td className="px-5 py-3 text-right font-medium text-primary">
                   {formatAmount(periodTotal)}
                 </td>
-                <td className="px-5 py-3 text-right text-gray-500">100%</td>
+                <td className="px-5 py-3 text-right text-ink-mute">100%</td>
               </tr>
             </tfoot>
           </table>
@@ -283,12 +283,12 @@ function SummaryCard({
   valueColor?: string
 }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
-      <div className={`${bgColor} p-3 rounded-xl flex-shrink-0`}>{icon}</div>
+    <div className="bg-canvas rounded-lg border border-hairline p-5 flex items-center gap-4">
+      <div className={`${bgColor} p-3 rounded-lg border border-hairline flex-shrink-0`}>{icon}</div>
       <div className="min-w-0">
-        <p className="text-xs text-gray-500 mb-0.5">{label}</p>
-        <p className={`text-xl font-bold truncate ${valueColor}`}>{value}</p>
-        {sub && <p className="text-xs text-gray-500 mt-0.5">{sub}</p>}
+        <p className="text-xs text-ink-mute mb-0.5">{label}</p>
+        <p className={`text-xl font-medium truncate ${valueColor}`}>{value}</p>
+        {sub && <p className="text-xs text-ink-mute mt-0.5">{sub}</p>}
       </div>
     </div>
   )

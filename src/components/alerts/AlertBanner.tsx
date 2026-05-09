@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { AlertTriangle, Wrench, X } from 'lucide-react'
 
@@ -25,26 +25,35 @@ interface Props {
 const DISMISS_KEY_BROKEN = 'collecie_dismiss_broken_'
 const DISMISS_KEY_LOW = 'collecie_dismiss_low_'
 
+function readDismissedKeys(): Set<string> {
+  if (typeof window === 'undefined') return new Set()
+  const keys = new Set<string>()
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i)
+    if (k && (k.startsWith(DISMISS_KEY_BROKEN) || k.startsWith(DISMISS_KEY_LOW)) && localStorage.getItem(k) === '1') {
+      keys.add(k)
+    }
+  }
+  return keys
+}
+
 export default function AlertBanner({ brokenMachines, lowInventoryItems }: Props) {
-  const [brokenDismissed, setBrokenDismissed] = useState(false)
-  const [lowDismissed, setLowDismissed] = useState(false)
+  const [dismissedKeys, setDismissedKeys] = useState<Set<string>>(readDismissedKeys)
 
   const brokenKey = DISMISS_KEY_BROKEN + brokenMachines.map((m) => m.id).join('_')
   const lowKey = DISMISS_KEY_LOW + lowInventoryItems.map((i) => i.id).join('_')
 
-  useEffect(() => {
-    setBrokenDismissed(localStorage.getItem(brokenKey) === '1')
-    setLowDismissed(localStorage.getItem(lowKey) === '1')
-  }, [brokenKey, lowKey])
+  const brokenDismissed = dismissedKeys.has(brokenKey)
+  const lowDismissed = dismissedKeys.has(lowKey)
 
   function dismissBroken() {
     localStorage.setItem(brokenKey, '1')
-    setBrokenDismissed(true)
+    setDismissedKeys((prev) => new Set([...prev, brokenKey]))
   }
 
   function dismissLow() {
     localStorage.setItem(lowKey, '1')
-    setLowDismissed(true)
+    setDismissedKeys((prev) => new Set([...prev, lowKey]))
   }
 
   if (brokenMachines.length === 0 && lowInventoryItems.length === 0) return null

@@ -30,9 +30,9 @@ const roleLabels: Record<Role, string> = {
 }
 
 const roleBadgeColors: Record<Role, string> = {
-  admin: 'bg-purple-100 text-purple-800',
-  collecter: 'bg-blue-100 text-blue-800',
-  viewer: 'bg-gray-100 text-gray-600',
+  admin: 'bg-canvas-soft text-ink border border-hairline',
+  collecter: 'bg-canvas-soft text-primary border border-primary/20',
+  viewer: 'bg-canvas-soft text-ink-mute border border-hairline',
 }
 
 export default function MemberList({ members, currentUserId, orgOwnerId }: Props) {
@@ -63,30 +63,30 @@ export default function MemberList({ members, currentUserId, orgOwnerId }: Props
   return (
     <div>
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="mb-4 rounded-md bg-[#fff3f0] border border-accent-tomato/30 px-4 py-3 text-sm text-accent-tomato">
           {error}
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <div className="overflow-hidden rounded-lg border border-hairline bg-canvas">
+        <table className="min-w-full divide-y divide-hairline">
+          <thead className="bg-canvas-soft">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
                 メンバー
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
                 役割
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-ink-mute uppercase tracking-wider">
                 参加日
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-ink-mute uppercase tracking-wider">
                 操作
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-hairline">
             {members.map((member) => {
               const displayName = member.full_name ?? member.username ?? member.email
               const initials = displayName.charAt(0).toUpperCase()
@@ -94,23 +94,23 @@ export default function MemberList({ members, currentUserId, orgOwnerId }: Props
               const isOwner = member.user_id === orgOwnerId
 
               return (
-                <tr key={member.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={member.id} className="hover:bg-canvas-soft transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-sm font-semibold flex-shrink-0">
+                      <div className="h-9 w-9 rounded-full bg-canvas-soft border border-hairline flex items-center justify-center text-ink-mute text-sm font-medium flex-shrink-0">
                         {initials}
                       </div>
                       <div className="min-w-0">
-                        <div className="text-sm font-medium text-gray-900 truncate flex items-center gap-2">
+                        <div className="text-sm font-medium text-ink truncate flex items-center gap-2">
                           {displayName}
                           {isSelf && (
-                            <span className="text-xs text-gray-400 font-normal">(自分)</span>
+                            <span className="text-xs text-ink-faint font-normal">(自分)</span>
                           )}
                           {isOwner && (
-                            <span className="text-xs text-amber-600 font-medium">オーナー</span>
+                            <span className="text-xs text-accent-yellow font-medium">オーナー</span>
                           )}
                         </div>
-                        <div className="text-xs text-gray-500 truncate">{member.email}</div>
+                        <div className="text-xs text-ink-mute truncate">{member.email}</div>
                       </div>
                     </div>
                   </td>
@@ -126,7 +126,7 @@ export default function MemberList({ members, currentUserId, orgOwnerId }: Props
                           defaultValue={member.role}
                           disabled={isPending}
                           onChange={(e) => handleRoleChange(member.id, e.target.value)}
-                          className={`appearance-none pr-7 pl-2.5 py-1 rounded-full text-xs font-medium border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 ${roleBadgeColors[member.role]} disabled:opacity-60`}
+                          className={`appearance-none pr-7 pl-2.5 py-1 rounded-full text-xs font-medium border cursor-pointer focus:outline-none focus:border-ink-mute-2 ${roleBadgeColors[member.role]} disabled:opacity-60`}
                         >
                           <option value="admin">管理者</option>
                           <option value="collecter">集金担当</option>
@@ -137,7 +137,7 @@ export default function MemberList({ members, currentUserId, orgOwnerId }: Props
                     )}
                   </td>
 
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-ink-mute">
                     {new Date(member.joined_at).toLocaleDateString('ja-JP')}
                   </td>
 
@@ -147,7 +147,7 @@ export default function MemberList({ members, currentUserId, orgOwnerId }: Props
                         onClick={() => handleRemove(member.id, displayName)}
                         disabled={isPending}
                         title="メンバーを削除"
-                        className="text-gray-400 hover:text-red-600 transition disabled:opacity-50"
+                        className="text-ink-mute hover:text-accent-tomato transition disabled:opacity-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

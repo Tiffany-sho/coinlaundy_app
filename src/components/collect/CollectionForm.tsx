@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { createCollectionAction, updateCollectionAction } from '@/app/dashboard/collect/actions'
 import type { LaundryStore, Machine, Profile, CollectFunds, FundsItem } from '@/types/database'
@@ -51,26 +50,35 @@ export default function CollectionForm({
   profile,
   initialData,
 }: CollectionFormProps) {
-  const router = useRouter()
   const isEdit = !!initialData
 
   const collectMethod = profile.collect_method ?? 'machines'
   const trackDenoms = profile.track_denominations ?? false
 
-  const [selectedStoreId, setSelectedStoreId] = useState<string>(
-    initialData?.laundry_id ?? initialStoreId ?? stores[0]?.id ?? ''
-  )
-  const [machines, setMachines] = useState<Machine[]>(initialMachines)
+  const initialStoreIdResolved = initialData?.laundry_id ?? initialStoreId ?? stores[0]?.id ?? ''
+
+  const [selectedStoreId, setSelectedStoreId] = useState<string>(initialStoreIdResolved)
   const [loadingMachines, setLoadingMachines] = useState(false)
-  const [collectedAt, setCollectedAt] = useState<string>(
-    initialData?.collected_at
-      ? (() => {
-          const d = new Date(initialData.collected_at)
-          const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000)
-          return jst.toISOString().slice(0, 16)
-        })()
-      : nowJSTString()
-  )
+
+  function readDraft(storeId: string): { collectedAt?: string; entries?: MachineEntry[] } | null {
+    if (isEdit || !storeId || typeof window === 'undefined') return null
+    try {
+      const raw = localStorage.getItem(`draft_collect_${storeId}`)
+      return raw ? JSON.parse(raw) : null
+    } catch {
+      return null
+    }
+  }
+
+  const [collectedAt, setCollectedAt] = useState<string>(() => {
+    if (initialData?.collected_at) {
+      const d = new Date(initialData.collected_at)
+      const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000)
+      return jst.toISOString().slice(0, 16)
+    }
+    const draft = readDraft(initialStoreIdResolved)
+    return draft?.collectedAt ?? nowJSTString()
+  })
 
   const [entries, setEntries] = useState<MachineEntry[]>(() => {
     if (initialData?.funds_array) {
@@ -92,6 +100,9 @@ export default function CollectionForm({
           : undefined,
       }))
     }
+
+    const draft = readDraft(initialStoreIdResolved)
+    if (draft?.entries) return draft.entries
 
     if (collectMethod === 'total') {
       return [
@@ -120,24 +131,6 @@ export default function CollectionForm({
   useEffect(() => {
     if (isEdit || !selectedStoreId) return
     try {
-      const raw = localStorage.getItem(draftKey)
-      if (raw) {
-        const draft = JSON.parse(raw) as {
-          collectedAt: string
-          entries: MachineEntry[]
-        }
-        setCollectedAt(draft.collectedAt ?? nowJSTString())
-        setEntries(draft.entries ?? [])
-      }
-    } catch {
-      // ignore
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draftKey, isEdit])
-
-  useEffect(() => {
-    if (isEdit || !selectedStoreId) return
-    try {
       localStorage.setItem(draftKey, JSON.stringify({ collectedAt, entries }))
     } catch {
       // ignore
@@ -156,7 +149,6 @@ export default function CollectionForm({
         .order('sort_order', { ascending: true, nullsFirst: false })
         .order('created_at', { ascending: true })
       const fetched: Machine[] = data ?? []
-      setMachines(fetched)
       setEntries(
         fetched.map((m) => ({
           machine_id: m.id,
@@ -172,6 +164,13 @@ export default function CollectionForm({
 
   const handleStoreChange = async (storeId: string) => {
     setSelectedStoreId(storeId)
+    // Load draft for the newly selected store
+    const draft = readDraft(storeId)
+    if (draft?.entries) {
+      if (draft.collectedAt) setCollectedAt(draft.collectedAt)
+      setEntries(draft.entries)
+      return
+    }
     if (collectMethod === 'total') {
       setEntries([
         {

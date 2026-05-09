@@ -34,7 +34,7 @@ function formatRelativeTime(dateStr: string): string {
 export default function ActionLog({ actions }: Props) {
   if (actions.length === 0) {
     return (
-      <div className="text-center py-16 text-gray-400">
+      <div className="text-center py-16 text-ink-faint">
         <Clock className="mx-auto h-10 w-10 mb-3 opacity-30" />
         <p className="text-sm">アクションログがありません</p>
       </div>
@@ -44,7 +44,7 @@ export default function ActionLog({ actions }: Props) {
   return (
     <ol className="relative">
       {/* Vertical timeline line */}
-      <div className="absolute left-5 top-0 bottom-0 w-px bg-gray-200" aria-hidden="true" />
+      <div className="absolute left-5 top-0 bottom-0 w-px bg-hairline" aria-hidden="true" />
 
       {actions.map((action, index) => {
         const actorName =
@@ -68,23 +68,23 @@ export default function ActionLog({ actions }: Props) {
             className={`relative flex gap-4 ${index !== actions.length - 1 ? 'pb-6' : ''}`}
           >
             {/* Timeline dot */}
-            <div className="flex-shrink-0 z-10 flex items-center justify-center h-10 w-10 rounded-full bg-white border-2 border-indigo-200 shadow-sm">
-              <Clock className="h-4 w-4 text-indigo-500" />
+            <div className="flex-shrink-0 z-10 flex items-center justify-center h-10 w-10 rounded-full bg-canvas border border-hairline">
+              <Clock className="h-4 w-4 text-primary" />
             </div>
 
             {/* Content */}
             <div className="flex-1 min-w-0 pt-1.5">
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                <span className="text-sm font-semibold text-gray-800">{actorName}</span>
-                <span className="text-sm text-gray-700">{action.message}</span>
+                <span className="text-sm font-medium text-ink">{actorName}</span>
+                <span className="text-sm text-ink-mute">{action.message}</span>
               </div>
               <time
                 dateTime={action.occurred_at}
                 title={absoluteTime}
-                className="mt-0.5 block text-xs text-gray-400"
+                className="mt-0.5 block text-xs text-ink-faint"
               >
                 {relativeTime}
-                <span className="ml-2 text-gray-300">({absoluteTime})</span>
+                <span className="ml-2 text-ink-faint/60">({absoluteTime})</span>
               </time>
             </div>
           </li>
