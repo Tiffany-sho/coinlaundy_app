@@ -34,7 +34,6 @@ export default async function StoreInventoryPage({ params }: PageProps) {
     .from('laundry_inventory')
     .select('*, inventory_types(*)')
     .eq('laundry_id', id)
-    .order('created_at', { ascending: true })
 
   const inventory: InventoryWithType[] = (inventoryData ?? []) as InventoryWithType[]
 
