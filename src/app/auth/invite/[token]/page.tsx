@@ -46,9 +46,9 @@ export default async function InvitePage({ params }: Props) {
     return (
       <InviteLayout>
         <div className="text-center">
-          <XCircle className="mx-auto h-12 w-12 text-red-400 mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 mb-2">招待が見つかりません</h1>
-          <p className="text-sm text-gray-500 mb-6">
+          <XCircle className="mx-auto h-12 w-12 text-accent-tomato mb-4" />
+          <h1 className="text-xl font-medium text-ink mb-2">招待が見つかりません</h1>
+          <p className="text-sm text-ink-mute mb-6">
             この招待リンクは無効です。リンクが正しいか確認してください。
           </p>
           <Link href="/auth/login" className="btn-primary">
@@ -63,14 +63,14 @@ export default async function InvitePage({ params }: Props) {
     return (
       <InviteLayout>
         <div className="text-center">
-          <CheckCircle className="mx-auto h-12 w-12 text-green-400 mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 mb-2">この招待はすでに承認済みです</h1>
-          <p className="text-sm text-gray-500 mb-6">
+          <CheckCircle className="mx-auto h-12 w-12 text-primary mb-4" />
+          <h1 className="text-xl font-medium text-ink mb-2">この招待はすでに承認済みです</h1>
+          <p className="text-sm text-ink-mute mb-6">
             すでにメンバーとして登録されています。
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-lg transition text-sm"
+            className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-deep text-on-primary font-medium py-2.5 px-6 rounded-sm transition text-sm"
           >
             ダッシュボードへ
           </Link>
@@ -84,8 +84,8 @@ export default async function InvitePage({ params }: Props) {
       <InviteLayout>
         <div className="text-center">
           <Clock className="mx-auto h-12 w-12 text-amber-400 mb-4" />
-          <h1 className="text-xl font-bold text-gray-900 mb-2">招待の有効期限が切れています</h1>
-          <p className="text-sm text-gray-500 mb-6">
+          <h1 className="text-xl font-medium text-ink mb-2">招待の有効期限が切れています</h1>
+          <p className="text-sm text-ink-mute mb-6">
             この招待リンクは有効期限が切れています。組織の管理者に新しい招待を依頼してください。
           </p>
         </div>
@@ -102,48 +102,48 @@ export default async function InvitePage({ params }: Props) {
       <InviteLayout>
         <div className="text-center">
           <div className="mb-6">
-            <div className="mx-auto h-14 w-14 rounded-full bg-indigo-100 flex items-center justify-center mb-4">
-              <LogIn className="h-7 w-7 text-indigo-600" />
+            <div className="mx-auto h-14 w-14 rounded-full bg-canvas-soft border border-hairline flex items-center justify-center mb-4">
+              <LogIn className="h-7 w-7 text-ink-mute" />
             </div>
-            <h1 className="text-xl font-bold text-gray-900 mb-1">招待が届いています</h1>
+            <h1 className="text-xl font-medium text-ink mb-1">招待が届いています</h1>
             {orgName && (
-              <p className="text-sm font-medium text-indigo-700">{orgName}</p>
+              <p className="text-sm font-medium text-ink-mute">{orgName}</p>
             )}
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
-            <div className="text-sm text-gray-600 space-y-1">
+          <div className="bg-canvas-soft border border-hairline rounded-xl p-4 mb-6 text-left">
+            <div className="text-sm text-ink-mute space-y-1">
               <div className="flex justify-between">
-                <span className="text-gray-500">招待先メール</span>
-                <span className="font-medium text-gray-800">{invitation.email}</span>
+                <span className="text-ink-mute">招待先メール</span>
+                <span className="font-medium text-ink">{invitation.email}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">役割</span>
-                <span className="font-medium text-gray-800">{roleLabels[role]}</span>
+                <span className="text-ink-mute">役割</span>
+                <span className="font-medium text-ink">{roleLabels[role]}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">有効期限</span>
-                <span className="font-medium text-gray-800">
+                <span className="text-ink-mute">有効期限</span>
+                <span className="font-medium text-ink">
                   {new Date(invitation.expires_at).toLocaleDateString('ja-JP')}
                 </span>
               </div>
             </div>
           </div>
 
-          <p className="text-sm text-gray-500 mb-5">
+          <p className="text-sm text-ink-mute mb-5">
             招待を承認するには、{invitation.email} でログインまたはアカウントを作成してください。
           </p>
 
           <div className="flex flex-col gap-3">
             <Link
               href={`/auth/login?next=/auth/invite/${token}&email=${encodeURIComponent(invitation.email)}`}
-              className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-lg transition text-sm"
+              className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-deep text-on-primary font-medium py-2.5 px-6 rounded-sm transition text-sm"
             >
               ログインして承認する
             </Link>
             <Link
               href={`/auth/register?next=/auth/invite/${token}&email=${encodeURIComponent(invitation.email)}`}
-              className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-6 rounded-lg border border-gray-300 transition text-sm"
+              className="inline-flex items-center justify-center gap-2 bg-canvas border border-hairline-strong hover:bg-canvas-soft text-ink font-medium py-2.5 px-6 rounded-sm transition text-sm"
             >
               アカウントを作成して承認する
             </Link>
@@ -161,38 +161,38 @@ export default async function InvitePage({ params }: Props) {
     <InviteLayout>
       <div className="text-center">
         <div className="mb-6">
-          <div className="mx-auto h-14 w-14 rounded-full bg-indigo-100 flex items-center justify-center mb-4">
-            <CheckCircle className="h-7 w-7 text-indigo-600" />
+          <div className="mx-auto h-14 w-14 rounded-full bg-canvas-soft border border-hairline flex items-center justify-center mb-4">
+            <CheckCircle className="h-7 w-7 text-primary" />
           </div>
-          <h1 className="text-xl font-bold text-gray-900 mb-1">この招待を承認しますか？</h1>
+          <h1 className="text-xl font-medium text-ink mb-1">この招待を承認しますか？</h1>
           {orgName && (
-            <p className="text-sm font-medium text-indigo-700">{orgName}</p>
+            <p className="text-sm font-medium text-ink-mute">{orgName}</p>
           )}
         </div>
 
         {emailMismatch && (
-          <div className="mb-5 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800 text-left">
+          <div className="mb-5 rounded-lg bg-[#fff3f0] border border-accent-tomato/30 px-4 py-3 text-sm text-accent-tomato text-left">
             <strong>注意：</strong> この招待は <strong>{invitation.email}</strong> 宛ですが、
             現在 <strong>{user.email}</strong> でログインしています。
             承認しようとすると失敗します。
           </div>
         )}
 
-        <div className="bg-gray-50 rounded-xl p-4 mb-6 text-left">
-          <div className="text-sm text-gray-600 space-y-1">
+        <div className="bg-canvas-soft border border-hairline rounded-xl p-4 mb-6 text-left">
+          <div className="text-sm text-ink-mute space-y-1">
             {orgName && (
               <div className="flex justify-between">
-                <span className="text-gray-500">組織</span>
-                <span className="font-medium text-gray-800">{orgName}</span>
+                <span className="text-ink-mute">組織</span>
+                <span className="font-medium text-ink">{orgName}</span>
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-gray-500">役割</span>
-              <span className="font-medium text-gray-800">{roleLabels[role]}</span>
+              <span className="text-ink-mute">役割</span>
+              <span className="font-medium text-ink">{roleLabels[role]}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">有効期限</span>
-              <span className="font-medium text-gray-800">
+              <span className="text-ink-mute">有効期限</span>
+              <span className="font-medium text-ink">
                 {new Date(invitation.expires_at).toLocaleDateString('ja-JP')}
               </span>
             </div>
@@ -207,13 +207,13 @@ export default async function InvitePage({ params }: Props) {
         >
           <button
             type="submit"
-            className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-lg transition text-sm"
+            className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-deep text-on-primary font-medium py-2.5 px-6 rounded-sm transition text-sm"
           >
             招待を承認する
           </button>
         </form>
 
-        <p className="mt-4 text-xs text-gray-500">
+        <p className="mt-4 text-xs text-ink-mute">
           現在 {user.email} でログイン中
         </p>
       </div>
@@ -223,11 +223,11 @@ export default async function InvitePage({ params }: Props) {
 
 function InviteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-blue-50 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-canvas border border-hairline rounded-xl shadow-sm p-8">
         <div className="mb-6 text-center">
-          <span className="text-2xl font-bold text-indigo-900 tracking-tight">Collecie</span>
-          <p className="text-xs text-gray-400 mt-0.5">コインランドリー集金管理</p>
+          <span className="text-2xl font-medium text-ink tracking-tight">Collecie</span>
+          <p className="text-xs text-ink-faint mt-0.5">コインランドリー集金管理</p>
         </div>
         {children}
       </div>
