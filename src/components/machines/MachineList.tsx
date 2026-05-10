@@ -7,6 +7,7 @@ import {
   updateMachineStatusAction,
   deleteMachineAction,
 } from '@/app/dashboard/stores/[id]/machines/actions'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 interface MachineListProps {
   machines: Machine[]
@@ -27,6 +28,7 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
   const [draftComment, setDraftComment] = useState(machine.comment ?? '')
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   function toggleStatus() {
     const newStatus = !isBroken
@@ -48,7 +50,7 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
   }
 
   function handleDelete() {
-    if (!confirm(`「${machine.name}」を削除しますか？この操作は取り消せません。`)) return
+    setShowDeleteConfirm(false)
     startTransition(async () => {
       const result = await deleteMachineAction(machine.id)
       if (result?.error) setError(result.error)
@@ -122,14 +124,24 @@ function MachineRow({ machine, isAdmin, canEdit }: MachineRowProps) {
           )}
 
           {isAdmin && (
-            <button
-              onClick={handleDelete}
-              disabled={isPending}
-              title="削除"
-              className="p-1.5 rounded-sm text-ink-mute hover:text-accent-tomato hover:bg-[#fff3f0] transition disabled:opacity-50"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+            <>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                disabled={isPending}
+                title="削除"
+                className="p-1.5 rounded-sm text-ink-mute hover:text-accent-tomato hover:bg-[#fff3f0] transition disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+              <ConfirmDialog
+                open={showDeleteConfirm}
+                title={`「${machine.name}」を削除`}
+                message="この操作は取り消せません。"
+                onConfirm={handleDelete}
+                onCancel={() => setShowDeleteConfirm(false)}
+                isPending={isPending}
+              />
+            </>
           )}
         </div>
       </div>

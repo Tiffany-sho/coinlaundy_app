@@ -8,6 +8,7 @@ import {
   updateInventoryTypeAction,
 } from '@/app/dashboard/inventory/actions'
 import type { InventoryType } from '@/types/database'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 interface Props {
   inventoryTypes: InventoryType[]
@@ -27,6 +28,7 @@ export default function InventoryTypeManager({ inventoryTypes }: Props) {
   const [editError, setEditError] = useState<string | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null)
 
   function handleAdd(formData: FormData) {
     setFormError(null)
@@ -76,11 +78,12 @@ export default function InventoryTypeManager({ inventoryTypes }: Props) {
     })
   }
 
-  function handleDelete(typeId: string, name: string) {
-    if (!confirm(`「${name}」を削除しますか？関連する全店舗の在庫データも削除されます。`)) return
+  function handleDelete() {
+    if (!deleteTarget) return
     setDeleteError(null)
+    setDeleteTarget(null)
     startTransition(async () => {
-      const result = await deleteInventoryTypeAction(typeId)
+      const result = await deleteInventoryTypeAction(deleteTarget.id)
       if (result.error) setDeleteError(result.error)
     })
   }
@@ -248,7 +251,7 @@ export default function InventoryTypeManager({ inventoryTypes }: Props) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDelete(type.id, type.name)}
+                      onClick={() => setDeleteTarget({ id: type.id, name: type.name })}
                       disabled={isPending}
                       className="p-1.5 text-ink-mute hover:text-accent-tomato hover:bg-[#fff3f0] rounded-sm transition disabled:opacity-40"
                       aria-label={`${type.name}を削除`}
@@ -262,6 +265,15 @@ export default function InventoryTypeManager({ inventoryTypes }: Props) {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title={`「${deleteTarget?.name ?? ''}」を削除`}
+        message="関連する全店舗の在庫データも削除されます。この操作は取り消せません。"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+        isPending={isPending}
+      />
     </div>
   )
 }

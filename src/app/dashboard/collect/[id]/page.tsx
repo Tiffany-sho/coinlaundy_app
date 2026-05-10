@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Pencil, Trash2, CalendarDays, User, Store, WashingMachine } from 'lucide-react'
+import { Pencil, CalendarDays, User, Store, WashingMachine } from 'lucide-react'
 import { getCurrentUserWithOrg } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
-import { deleteCollectionAction } from '@/app/dashboard/collect/actions'
 import { formatAmount, formatDateJST } from '@/lib/utils'
 import type { CollectFunds, LaundryStore, Profile, FundsItem } from '@/types/database'
+import DeleteCollectionButton from '@/components/collect/DeleteCollectionButton'
 
 interface CollectWithRelations extends CollectFunds {
   laundry_store: Pick<LaundryStore, 'id' | 'name'> | null
@@ -45,11 +45,6 @@ export default async function CollectionDetailPage({ params }: PageProps) {
 
   const collectorName =
     record.collector?.full_name ?? record.collector?.username ?? '不明'
-
-  async function handleDelete() {
-    'use server'
-    await deleteCollectionAction(id)
-  }
 
   const DENOMINATION_LABELS: Record<string, string> = {
     '10': '10円',
@@ -100,20 +95,7 @@ export default async function CollectionDetailPage({ params }: PageProps) {
                 <Pencil className="h-3.5 w-3.5" />
                 編集
               </Link>
-              <form action={handleDelete}>
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-accent-tomato bg-canvas border border-hairline-strong hover:bg-[#fff3f0] rounded-sm transition"
-                  onClick={(e) => {
-                    if (!confirm('この集金記録を削除しますか？この操作は取り消せません。')) {
-                      e.preventDefault()
-                    }
-                  }}
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  削除
-                </button>
-              </form>
+              <DeleteCollectionButton id={id} />
             </div>
           )}
         </div>

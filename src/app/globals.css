@@ -46,3 +46,7 @@ body {
   background: #ffffff;
   color: #171717;
 }
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}

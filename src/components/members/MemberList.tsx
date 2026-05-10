@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { updateMemberRoleAction, removeMemberAction } from '@/app/dashboard/members/actions'
 import { Trash2, ChevronDown } from 'lucide-react'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 type Role = 'admin' | 'collecter' | 'viewer'
 
@@ -38,6 +39,7 @@ const roleBadgeColors: Record<Role, string> = {
 export default function MemberList({ members, currentUserId, orgOwnerId }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [removeTarget, setRemoveTarget] = useState<{ id: string; name: string } | null>(null)
 
   function handleRoleChange(memberId: string, newRole: string) {
     setError(null)
@@ -49,11 +51,12 @@ export default function MemberList({ members, currentUserId, orgOwnerId }: Props
     })
   }
 
-  function handleRemove(memberId: string, displayName: string) {
-    if (!confirm(`${displayName} をメンバーから削除しますか？`)) return
+  function handleRemove() {
+    if (!removeTarget) return
     setError(null)
+    setRemoveTarget(null)
     startTransition(async () => {
-      const result = await removeMemberAction(memberId)
+      const result = await removeMemberAction(removeTarget.id)
       if (result?.error) {
         setError(result.error)
       }
@@ -144,7 +147,7 @@ export default function MemberList({ members, currentUserId, orgOwnerId }: Props
                   <td className="px-6 py-4 text-right">
                     {!isSelf && !isOwner && (
                       <button
-                        onClick={() => handleRemove(member.id, displayName)}
+                        onClick={() => setRemoveTarget({ id: member.id, name: displayName })}
                         disabled={isPending}
                         title="メンバーを削除"
                         className="text-ink-mute hover:text-accent-tomato transition disabled:opacity-50"
@@ -159,6 +162,15 @@ export default function MemberList({ members, currentUserId, orgOwnerId }: Props
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={!!removeTarget}
+        title={`${removeTarget?.name ?? ''} を削除`}
+        message="このメンバーを組織から削除します。この操作は取り消せません。"
+        onConfirm={handleRemove}
+        onCancel={() => setRemoveTarget(null)}
+        isPending={isPending}
+      />
     </div>
   )
 }
