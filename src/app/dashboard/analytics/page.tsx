@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
-import { BarChart3, TrendingUp, Store, ArrowUpDown } from 'lucide-react'
+import Link from 'next/link'
+import { BarChart3, TrendingUp, Store, ArrowUpDown, MapPin } from 'lucide-react'
 import { getCurrentUserWithOrg } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import { formatAmount } from '@/lib/utils'
@@ -18,6 +19,7 @@ interface PageProps {
     period?: string
     from?: string
     to?: string
+    store?: string
   }>
 }
 
@@ -44,6 +46,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
   const period = params.period ?? defaults.period
   const from = params.from ?? defaults.from
   const to = params.to ?? defaults.to
+  const storeFilter = params.store ?? null
 
   const supabase = await createClient()
 
@@ -52,31 +55,42 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
   let prevRecords: CollectFunds[] = []
 
   if (membership?.org_id) {
-    // Fetch stores
-    const { data: storeData } = await supabase
-      .from('laundry_store')
-      .select('*')
-      .eq('organization_id', membership.org_id)
-      .order('name', { ascending: true })
-    stores = storeData ?? []
+    if (storeFilter) {
+      const { data: storeRow } = await supabase
+        .from('laundry_store')
+        .select('*')
+        .eq('id', storeFilter)
+        .single()
+      if (storeRow) stores = [storeRow]
+    } else {
+      const { data: storeData } = await supabase
+        .from('laundry_store')
+        .select('*')
+        .eq('organization_id', membership.org_id)
+        .order('name', { ascending: true })
+      stores = storeData ?? []
+    }
 
     if (stores.length > 0) {
-      const storeIds = stores.map((s) => s.id)
-
-      // Fetch current period records
       const fromUTC = new Date(from + 'T00:00:00+09:00').toISOString()
       const toUTC = new Date(to + 'T23:59:59+09:00').toISOString()
 
-      const { data: currentData } = await supabase
+      let currentQuery = supabase
         .from('collect_funds')
         .select('*')
-        .in('laundry_id', storeIds)
         .gte('collected_at', fromUTC)
         .lte('collected_at', toUTC)
         .order('collected_at', { ascending: true })
+
+      if (storeFilter) {
+        currentQuery = currentQuery.eq('laundry_id', storeFilter)
+      } else {
+        currentQuery = currentQuery.in('laundry_id', stores.map((s) => s.id))
+      }
+
+      const { data: currentData } = await currentQuery
       records = currentData ?? []
 
-      // Calculate previous period for comparison
       const periodLengthMs =
         new Date(toUTC).getTime() - new Date(fromUTC).getTime()
       const prevToUTC = new Date(new Date(fromUTC).getTime() - 1).toISOString()
@@ -84,15 +98,24 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
         new Date(fromUTC).getTime() - periodLengthMs - 1
       ).toISOString()
 
-      const { data: prevData } = await supabase
+      let prevQuery = supabase
         .from('collect_funds')
         .select('*')
-        .in('laundry_id', storeIds)
         .gte('collected_at', prevFromUTC)
         .lte('collected_at', prevToUTC)
+
+      if (storeFilter) {
+        prevQuery = prevQuery.eq('laundry_id', storeFilter)
+      } else {
+        prevQuery = prevQuery.in('laundry_id', stores.map((s) => s.id))
+      }
+
+      const { data: prevData } = await prevQuery
       prevRecords = prevData ?? []
     }
   }
+
+  const filteredStore = storeFilter ? (stores[0] ?? null) : null
 
   // Aggregate data
   const monthlyData = aggregateByMonth(records, stores)
@@ -125,6 +148,23 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
           </p>
         </div>
       </div>
+
+      {/* Store filter banner */}
+      {filteredStore && (
+        <div className="bg-canvas-soft border border-hairline rounded-lg px-4 py-3 mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm">
+            <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+            <span className="font-medium text-ink">{filteredStore.name}</span>
+            <span className="text-ink-mute">の売上を表示中</span>
+          </div>
+          <Link
+            href="/dashboard/analytics"
+            className="text-sm text-ink-mute hover:text-ink transition"
+          >
+            全店舗に戻る →
+          </Link>
+        </div>
+      )}
 
       {/* Period Selector */}
       <div className="bg-canvas rounded-lg border border-hairline p-4 mb-6">
