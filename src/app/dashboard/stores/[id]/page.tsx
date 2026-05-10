@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { MapPin, Pencil, Plus, Wrench, WashingMachine, Package } from 'lucide-react'
+import { MapPin, Pencil, Plus, Wrench, WashingMachine, Package, Wallet, BarChart3 } from 'lucide-react'
 import { getCurrentUserWithOrg } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import DeleteStoreButton from '@/components/stores/DeleteStoreButton'
@@ -100,6 +100,23 @@ export default async function StoreDetailPage({ params }: PageProps) {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="flex gap-3 mb-6">
+        <Link
+          href={`/dashboard/stores/${id}/collect`}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-ink bg-canvas border border-hairline hover:bg-canvas-soft rounded-sm transition"
+        >
+          <Wallet className="h-4 w-4 text-primary" />
+          集金記録を見る
+        </Link>
+        <Link
+          href={`/dashboard/analytics?store=${id}`}
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-ink bg-canvas border border-hairline hover:bg-canvas-soft rounded-sm transition"
+        >
+          <BarChart3 className="h-4 w-4 text-primary" />
+          売上を確認
+        </Link>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
