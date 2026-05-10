@@ -12,16 +12,15 @@ import {
 } from 'recharts'
 import type { MonthlyData } from '@/lib/analytics'
 
-// Indigo/blue palette for stores
 const STORE_COLORS = [
-  '#4f46e5', // indigo-600
-  '#0284c7', // sky-600
-  '#0891b2', // cyan-600
-  '#2563eb', // blue-600
-  '#7c3aed', // violet-600
-  '#059669', // emerald-600
-  '#d97706', // amber-600
-  '#dc2626', // red-600
+  '#3ecf8e',
+  '#60a5fa',
+  '#a78bfa',
+  '#fbbf24',
+  '#f87171',
+  '#38bdf8',
+  '#fb923c',
+  '#34d399',
 ]
 
 interface Props {
@@ -36,7 +35,7 @@ function formatYen(value: number) {
 export default function MonthlyChart({ data, storeNames }: Props) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-400 text-sm">
+      <div className="flex items-center justify-center h-64 text-ink-faint text-sm">
         データがありません
       </div>
     )
@@ -61,13 +60,13 @@ export default function MonthlyChart({ data, storeNames }: Props) {
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
         <XAxis
           dataKey="label"
-          tick={{ fontSize: 12, fill: '#6b7280' }}
+          tick={{ fontSize: 12, fill: '#707070' }}
           axisLine={false}
           tickLine={false}
         />
         <YAxis
           tickFormatter={formatYen}
-          tick={{ fontSize: 11, fill: '#6b7280' }}
+          tick={{ fontSize: 11, fill: '#707070' }}
           axisLine={false}
           tickLine={false}
           width={90}
@@ -75,8 +74,8 @@ export default function MonthlyChart({ data, storeNames }: Props) {
         <Tooltip
           formatter={(value, name) => [formatYen(Number(value)), String(name)]}
           contentStyle={{
-            borderRadius: '8px',
-            border: '1px solid #e5e7eb',
+            borderRadius: '6px',
+            border: '1px solid #dfdfdf',
             fontSize: '12px',
           }}
         />

@@ -273,7 +273,7 @@ function SummaryCard({
   value,
   sub,
   bgColor,
-  valueColor = 'text-gray-900',
+  valueColor = 'text-ink',
 }: {
   icon: React.ReactNode
   label: string

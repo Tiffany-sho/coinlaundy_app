@@ -88,7 +88,7 @@ export default function SetupForm() {
           {/* Full Name */}
           <div>
             <label htmlFor="full_name" className="block text-sm font-medium text-ink-mute mb-1">
-              氏名 <span className="text-red-500">*</span>
+              氏名 <span className="text-accent-tomato">*</span>
             </label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-mute-2" />
@@ -128,7 +128,7 @@ export default function SetupForm() {
           {/* Role Selection */}
           <div>
             <label className="block text-sm font-medium text-ink-mute mb-2">
-              役割 <span className="text-red-500">*</span>
+              役割 <span className="text-accent-tomato">*</span>
             </label>
             <div className="space-y-2">
               <RoleCard
@@ -159,7 +159,7 @@ export default function SetupForm() {
 
           {/* Info box for non-admin roles */}
           {isNonAdminRole && (
-            <div className="flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+            <div className="flex items-start gap-2 rounded-lg bg-[#fffbe0] border border-accent-yellow/40 px-4 py-3 text-sm text-ink">
               <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
               <span>
                 集金担当者・閲覧者は管理者からの招待が必要です。招待メールをお待ちください。
@@ -185,7 +185,7 @@ export default function SetupForm() {
           {/* Org Name */}
           <div>
             <label htmlFor="org_name" className="block text-sm font-medium text-ink-mute mb-1">
-              組織名 <span className="text-red-500">*</span>
+              組織名 <span className="text-accent-tomato">*</span>
             </label>
             <div className="relative">
               <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-mute-2" />
@@ -335,7 +335,7 @@ function RoleCard({
         <div className="text-sm font-semibold text-ink">
           {title}
           {badge && (
-            <span className="ml-2 text-xs font-normal text-amber-600">{badge}</span>
+            <span className="ml-2 text-xs font-normal text-ink-mute">{badge}</span>
           )}
         </div>
         <div className="text-xs text-ink-mute mt-0.5">{description}</div>

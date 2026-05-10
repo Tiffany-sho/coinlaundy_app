@@ -83,7 +83,7 @@ export default async function InvitePage({ params }: Props) {
     return (
       <InviteLayout>
         <div className="text-center">
-          <Clock className="mx-auto h-12 w-12 text-amber-400 mb-4" />
+          <Clock className="mx-auto h-12 w-12 text-ink-mute mb-4" />
           <h1 className="text-xl font-medium text-ink mb-2">招待の有効期限が切れています</h1>
           <p className="text-sm text-ink-mute mb-6">
             この招待リンクは有効期限が切れています。組織の管理者に新しい招待を依頼してください。

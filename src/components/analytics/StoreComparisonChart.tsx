@@ -13,14 +13,14 @@ import {
 import type { StoreData } from '@/lib/analytics'
 
 const STORE_COLORS = [
-  '#4f46e5',
-  '#0284c7',
-  '#0891b2',
-  '#2563eb',
-  '#7c3aed',
-  '#059669',
-  '#d97706',
-  '#dc2626',
+  '#3ecf8e',
+  '#60a5fa',
+  '#a78bfa',
+  '#fbbf24',
+  '#f87171',
+  '#38bdf8',
+  '#fb923c',
+  '#34d399',
 ]
 
 interface Props {
@@ -34,7 +34,7 @@ function formatYen(value: number) {
 export default function StoreComparisonChart({ data }: Props) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-gray-400 text-sm">
+      <div className="flex items-center justify-center h-64 text-ink-faint text-sm">
         データがありません
       </div>
     )
@@ -57,14 +57,14 @@ export default function StoreComparisonChart({ data }: Props) {
         <XAxis
           type="number"
           tickFormatter={formatYen}
-          tick={{ fontSize: 11, fill: '#6b7280' }}
+          tick={{ fontSize: 11, fill: '#707070' }}
           axisLine={false}
           tickLine={false}
         />
         <YAxis
           type="category"
           dataKey="name"
-          tick={{ fontSize: 12, fill: '#374151' }}
+          tick={{ fontSize: 12, fill: '#171717' }}
           axisLine={false}
           tickLine={false}
           width={100}
@@ -72,8 +72,8 @@ export default function StoreComparisonChart({ data }: Props) {
         <Tooltip
           formatter={(value) => [formatYen(Number(value)), '集金額']}
           contentStyle={{
-            borderRadius: '8px',
-            border: '1px solid #e5e7eb',
+            borderRadius: '6px',
+            border: '1px solid #dfdfdf',
             fontSize: '12px',
           }}
         />
