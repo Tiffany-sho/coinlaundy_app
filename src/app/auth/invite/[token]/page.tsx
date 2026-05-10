@@ -51,7 +51,7 @@ export default async function InvitePage({ params }: Props) {
           <p className="text-sm text-ink-mute mb-6">
             この招待リンクは無効です。リンクが正しいか確認してください。
           </p>
-          <Link href="/auth/login" className="btn-primary">
+          <Link href="/auth/login" className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-deep text-on-primary font-medium py-2.5 px-6 rounded-sm transition text-sm">
             ログインページへ
           </Link>
         </div>
