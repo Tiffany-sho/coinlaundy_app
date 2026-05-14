@@ -19,6 +19,36 @@ ALTER TABLE public.collect_funds          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.action_message         ENABLE ROW LEVEL SECURITY;
 
 -- =============================================================
+-- Helper functions (SECURITY DEFINER)
+-- These bypass RLS when checking organization membership,
+-- which prevents infinite recursion in organization_members policies.
+-- =============================================================
+
+CREATE OR REPLACE FUNCTION public.is_member_of(p_org_id uuid)
+RETURNS boolean LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.organization_members
+    WHERE org_id = p_org_id AND user_id = auth.uid()
+  )
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_admin_of(p_org_id uuid)
+RETURNS boolean LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.organization_members
+    WHERE org_id = p_org_id AND user_id = auth.uid() AND role = 'admin'
+  )
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_admin_or_collecter_of(p_org_id uuid)
+RETURNS boolean LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.organization_members
+    WHERE org_id = p_org_id AND user_id = auth.uid() AND role IN ('admin', 'collecter')
+  )
+$$;
+
+-- =============================================================
 -- Helper: drop old policy if it exists so this script is
 -- idempotent (Supabase / PostgreSQL 14 does not support
 -- CREATE POLICY IF NOT EXISTS).
@@ -80,46 +110,26 @@ DROP POLICY IF EXISTS "org_members: admin can delete"    ON public.organization_
 
 CREATE POLICY "org_members: members can view"
   ON public.organization_members FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.organization_members om
-      WHERE om.org_id = org_id
-        AND om.user_id = auth.uid()
-    )
-  );
+  USING (public.is_member_of(org_id));
 
 CREATE POLICY "org_members: admin can insert"
   ON public.organization_members FOR INSERT
   WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.organization_members om
-      WHERE om.org_id = org_id
-        AND om.user_id = auth.uid()
-        AND om.role = 'admin'
+    public.is_admin_of(org_id)
+    OR (
+      user_id = auth.uid()
+      AND role = 'admin'
+      AND EXISTS (SELECT 1 FROM public.organizations WHERE id = org_id AND owner_id = auth.uid())
     )
   );
 
 CREATE POLICY "org_members: admin can update"
   ON public.organization_members FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.organization_members om
-      WHERE om.org_id = org_id
-        AND om.user_id = auth.uid()
-        AND om.role = 'admin'
-    )
-  );
+  USING (public.is_admin_of(org_id));
 
 CREATE POLICY "org_members: admin can delete"
   ON public.organization_members FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.organization_members om
-      WHERE om.org_id = org_id
-        AND om.user_id = auth.uid()
-        AND om.role = 'admin'
-    )
-  );
+  USING (public.is_admin_of(org_id));
 
 -- =============================================================
 -- organization_invitations
@@ -333,7 +343,8 @@ CREATE POLICY "inventory_types: admin can delete"
 -- =============================================================
 -- laundry_inventory
 -- =============================================================
-DROP POLICY IF EXISTS "laundry_inventory: members can select"          ON public.laundry_inventory;
+DROP POLICY IF EXISTS "laundry_inventory: members can select"            ON public.laundry_inventory;
+DROP POLICY IF EXISTS "laundry_inventory: admin or collecter can insert" ON public.laundry_inventory;
 DROP POLICY IF EXISTS "laundry_inventory: admin or collecter can update" ON public.laundry_inventory;
 
 CREATE POLICY "laundry_inventory: members can select"
@@ -345,6 +356,19 @@ CREATE POLICY "laundry_inventory: members can select"
       JOIN public.organization_members om ON om.org_id = ls.organization_id
       WHERE ls.id = laundry_id
         AND om.user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "laundry_inventory: admin or collecter can insert"
+  ON public.laundry_inventory FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1
+      FROM public.laundry_store ls
+      JOIN public.organization_members om ON om.org_id = ls.organization_id
+      WHERE ls.id = laundry_id
+        AND om.user_id = auth.uid()
+        AND om.role IN ('admin', 'collecter')
     )
   );
 

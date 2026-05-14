@@ -313,7 +313,6 @@ Service Client（RLS バイパス）は原則使用しない。Webhook など認
    - 種別追加時は既存全店舗の `laundry_inventory` に quantity=0 で自動追加
 2. `laundry_inventory` 更新（admin / collecter）
    - 低在庫アラート（`quantity < alert_threshold`）
-
 ```sql
 -- 低在庫クエリ
 SELECT ls.name AS store_name, it.name, li.quantity, it.alert_threshold, it.unit

@@ -18,6 +18,8 @@ export async function getCurrentUserWithOrg() {
     .from('organization_members')
     .select('*, organizations(*)')
     .eq('user_id', user.id)
+    .order('joined_at', { ascending: true })
+    .limit(1)
     .single()
 
   return { user, profile, membership }
