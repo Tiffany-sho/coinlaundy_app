@@ -72,7 +72,7 @@ export default async function CollectPage({ searchParams }: PageProps) {
       .from('profiles')
       .select('id, full_name, username')
       .in('id', uniqueCollectorIds)
-    profiles?.forEach((p) => { profileMap[p.id] = p })
+    profiles?.forEach((p: Pick<Profile, 'id' | 'full_name' | 'username'>) => { profileMap[p.id] = p })
   }
 
   const records: CollectWithStore[] = rawRecords.map((r) => ({
